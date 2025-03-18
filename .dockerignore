@@ -1,0 +1,7 @@
+README.md
+.gitignore
+/.git
+/.venv
+db.sqlite3
+.env
+/node_modules
