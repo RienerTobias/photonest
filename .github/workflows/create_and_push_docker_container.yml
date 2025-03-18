@@ -1,7 +1,7 @@
 name: Build and Push Docker Image
 
 on:
-  push:
+  release:
     branches:
       - main  # Oder ein anderer Branch für Deployments
   workflow_dispatch:  # Manuelles Triggern erlaubt
