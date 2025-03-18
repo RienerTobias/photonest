@@ -10,3 +10,6 @@ This is a lightweight application designed to streamline social media content ma
 [Trello Board](https://trello.com/b/OkOUUaaI/photonest)\
 [Penpot](https://penpot.eliadieminger.at)\
 [Affine](https://affine.tobiasriener.at/workspace/a6d90ecb-1b2b-4713-b085-07985637416b/K3pap_TpPl)
+
+# Developement Setup
+[Setup Guide](docs/config_setup.md)
