@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block base_content %}
+
+<body class="w-full h-fit min-h-screen">
+    {% block 'content' %}{% endblock %}
+    {% include 'photonest/base/dock.html' %}
+</body>
+
+{% endblock %}
