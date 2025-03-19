@@ -32,5 +32,3 @@
    ALLOWED_HOSTS=*Wunschdomain/IP-Adresse*
    CSRF_COOKIE_DOMAIN=*Basisdomain/IP-Adresse*  
    DJANGO_SECRET_KEY="django-secret-key"
-
-Das kannst du direkt in deine `README.md`-Datei einfügen und es wird formatiert und gut lesbar sein.
