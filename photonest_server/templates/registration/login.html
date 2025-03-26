@@ -4,9 +4,9 @@
 {% load static %}
 {% load widget_tweaks %}
 
-<body class="w-full h-fit min-h-screen flex flex-rol justify-center items-center bg-base-300">
-    <div class="flex flex-col items-center bg-base-100 px-32 py-12 rounded-3xl shadow-2xl">
-        <img class="w-56 aspect-1 mb-16" src="{% static 'photonest/images/logo.svg' %}">
+<body class="w-full h-dvh overflow-y-scroll font-sans overscroll-none touch-pan-y touch-pinch-zoom flex flex-col items-center justify-center bg-base-300">
+    <div class="flex flex-col items-center bg-base-100 p-12  rounded-3xl shadow-2xl max-w-full max-sm:w-4/5">
+        <img class="w-4/5 max-w-56 aspect-1 mb-16" src="{% static 'photonest/images/logo.svg' %}">
         <div class="w-54 h-fit text-error text-xs">
             {% if form.errors %}
             <p>Your username and password didn't match. Please try again.</p>
