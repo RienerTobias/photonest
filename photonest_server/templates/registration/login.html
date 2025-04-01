@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block base_content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<body class="w-full h-dvh overflow-y-scroll font-sans overscroll-none touch-pan-y touch-pinch-zoom flex flex-col items-center justify-center bg-base-300">
+    <div class="flex flex-col items-center bg-base-100 p-12  rounded-3xl shadow-2xl max-w-full max-sm:w-4/5">
+        <img class="w-4/5 max-w-56 aspect-1 mb-16" src="{% static 'photonest/images/logo.svg' %}">
+        <div class="w-54 h-fit text-error text-xs">
+            {% if form.errors %}
+            <p>Your username and password didn't match. Please try again.</p>
+            {% endif %}
+
+            {% if next %}
+                {% if user.is_authenticated %}
+                <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <form method="post" action="{% url 'login' %}" class="flex flex-col items-center">
+            {% csrf_token %}
+            <div class="m-1 w-56 p-1">
+                <label class="input validator rounded-full text-base">
+                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></g></svg>
+                    {{ form.username | attr:"placeholder:Benutzername" }}
+                  </label>
+                  <p class="validator-hint hidden">
+                    Must be 3 to 30 characters
+                    <br/>containing only letters, numbers or dash
+                  </p>
+            </div>
+            <div class="m-1 w-56 p-1">
+                <label class="input validator rounded-full text-base">
+                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle></g></svg>
+                    {{ form.password | attr:"placeholder:Passwort" }}
+                </label>
+                <p class="validator-hint hidden">
+                Must be more than 8 characters, including
+                <br/>At least one number
+                <br/>At least one lowercase letter
+                <br/>At least one uppercase letter
+            </div>
+            <input type="submit" value="Login" class="btn btn-primary m-6 w-56 rounded-full">
+            <input type="hidden" name="next" value="{{ next }}">
+        </form>
+    </div>
+</body>
+
+{% endblock %}
