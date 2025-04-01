@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'widget_tweaks',
+    'colorfield',
     'photonest',
 ]
 
