@@ -24,12 +24,8 @@ def create_post(request):
     if request.method == 'POST':
         post_form = PostForm(request.POST, user=request.user)
         media_formset = MediaFormSet(request.POST, request.FILES)
-        print("post")
-        print(post_form)
-        print(media_formset)
         if post_form.is_valid() and media_formset.is_valid():
             post = post_form.save()
-            print("valid")
             for form in media_formset:
                 if form.cleaned_data.get('media_file'):
                     media = form.save(commit=False)

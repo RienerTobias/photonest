@@ -162,3 +162,7 @@ INTERNAL_IPS = [
 
 # Login
 LOGIN_REDIRECT_URL = '/'
+
+# Media / Upload
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"

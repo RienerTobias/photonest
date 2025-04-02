@@ -22,7 +22,7 @@ class SchoolClass(models.Model):
 class Media(models.Model):
     MEDIA_TYPE_CHOICES = [('photo', 'Foto'), ('video', 'Video')]
     
-    media_file = models.FileField(upload_to='media/photonest/%Y/%m/%d/')
+    media_file = models.FileField(upload_to='photonest/%Y/%m/%d/')
     media_type = models.CharField(max_length=5, choices=MEDIA_TYPE_CHOICES)
     order = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(4)])
     
