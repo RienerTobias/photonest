@@ -38,7 +38,7 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     favorites = models.ManyToManyField(User, related_name='favorite_posts', blank=True)
     school_class = models.ForeignKey(SchoolClass, on_delete=models.PROTECT, related_name='posts')
-    description = models.TextField(max_length=500, blank=True)
+    description = models.TextField(max_length=500, blank=False)
     uploaded_at = models.DateTimeField(default=timezone.now)
     is_used = models.BooleanField(default=False)
     used_in = models.CharField(max_length=100, blank=True, null=True)
