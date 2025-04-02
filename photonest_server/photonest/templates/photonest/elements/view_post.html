@@ -20,19 +20,14 @@
       <p class="m-2">{{ post.description|truncatechars:255 }}</p>
       <div class="card-actions justify-between">
         <label class="text-md text-base-300">{{ post.uploaded_at }}</label>
-        <div class="">
-          <form method="post" action="{% url 'like_post' post.id %}">
-            {% csrf_token %}
-            <input type="hidden" name="like" value="1">
-            
-            <button type="submit" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
+        <div class="">            
+            <button onclick="likePost({{ post.id }})" id="like-btn-{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
                 {% if post|has_liked:user %}
                   <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
                 {% else %}
                   <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
                 {% endif %}
             </button>
-          </form>
         </div>
       </div>
     </div>
@@ -45,7 +40,7 @@
     <h3 class="text-lg font-bold">Beitrag ansehen</h3>
     <div class="w-full h-full flex flex-col items-center justify">
       <div class="w-full h-fit flex flex-row items-center justify-center">
-        <button class="btn btn-ghost text-xl m-4" onclick="changeMedia_{{ post.id }}(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="btn btn-ghost text-xl m-4" onclick="changeMedia({{ post.id }}, -1)"><i class="fa-solid fa-chevron-left"></i></button>
         <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container">
           {% with media=post.media_files.first %}
           <div class="carousel-item w-full">
@@ -63,7 +58,7 @@
           </div>
           {% endwith %}
         </div>
-        <button class="btn btn-ghost text-xl m-4" onclick="changeMedia_{{ post.id }}(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="btn btn-ghost text-xl m-4" onclick="changeMedia({{ post.id }}, 1)"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
     </div>
     <div class="p-4 w-full h-fit">
@@ -74,18 +69,13 @@
         <div class="card-actions justify-between">
           <label class="text-md text-base-300">{{ post.uploaded_at }}</label>
           <div class="">
-            <form method="post" action="{% url 'like_post' post.id %}">
-              {% csrf_token %}
-              <input type="hidden" name="like" value="1">
-              
-              <button type="submit" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
-                  {% if post|has_liked:user %}
-                    <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
-                  {% else %}
-                    <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
-                  {% endif %}
-              </button>
-            </form>
+            <button onclick="likePost({{ post.id }})" id="like-btn-{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
+              {% if post|has_liked:user %}
+                <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+              {% else %}
+                <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+              {% endif %}
+            </button>
           </div>
         </div>
       </div>
@@ -133,4 +123,6 @@
       imgElement_{{ post.id }}.style.display = 'none';
     }
   }
+
+  
 </script>
