@@ -1,54 +1,34 @@
 {% load static %}
 {% load widget_tweaks %}
-<div class="container flex flex-col items-center">
-    <form method="post" enctype="multipart/form-data" id="postForm" class="w-fit flex flex-col">
-        {% csrf_token %}
-        
-        <!-- Post-Informationen -->
-        <fieldset class="fieldset w-full">
-            <legend class="fieldset-legend text-md">Klasse</legend>
-            {{ post_form.school_class | attr:"class:select w-full rounded-full" }}
-        </fieldset>
-        
-        <fieldset class="fieldset w-full">
-            <legend class="fieldset-legend">Beschreibung</legend>
-            {{ post_form.description | attr:"class:textarea h-24 w-full" }}
-        </fieldset>
-        
-        <!-- Medien-Formulare -->
-        <div id="mediaForms">
-            {{ media_formset.management_form }}
-            {% for form in media_formset %}
-                <div class="media-form mb-1 p-1 flex flex-row items-center justify-between">
-                    {% for hidden in form.hidden_fields %}
-                        {{ hidden }}
-                    {% endfor %}
-                    <div class="m-1">
-                        <fieldset class="fieldset">
-                            <legend class="fieldset-legend">Datei hochladen</legend>
-                            {{ form.media_file | attr:"accept:image/*,video/*" | attr:"class:file-input" }}
-                            <label class="fieldset-label">Foto & Video</label>
-                        </fieldset>
-                        <div class="hidden">
-                            {{ form.media_type | attr:"class:media-type-select" }}
-                            {{ form.order }}
-                        </div>
-                    </div>
-                    {% if forloop.counter0 > 0 %}
-                        <button type="button" class="btn btn-error btn-sm mt-2 rounded-full btn-outline remove-media m-1 hover:btn-soft">
-                            <i class="fa-regular fa-trash remove-media"></i>
-                        </button>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-        
-        <button type="button" id="addMedia" class="btn btn-primary btn-soft mb-3 self-center">
-            <i class="fa-regular fa-plus"></i>
-            <span class="ml-2">Foto / Video</span>
-        </button>
-        <button type="submit" class="btn btn-primary d-block w-full">Post erstellen</button>
-    </form>
+<div class="container mx-auto px-4">
+    <!-- Post-Formular -->
+    <div class="bg-base-100 rounded-lg p-6 mb-8">
+        <form method="post" enctype="multipart/form-data" id="postForm">
+            {% csrf_token %}
+            
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Klasse</legend>
+                {{ form.school_class|add_class:"w-full select rounded-full" }}
+              </fieldset>
+            
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Beschreibung</legend>
+                {{ form.description|add_class:"w-full textarea h-24" }}
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Dateien auswählen</legend>
+                <input type="file" name="media_files" multiple 
+                       accept="image/*,video/*" 
+                       class="w-full file-input rounded-full"
+                       id="mediaUpload">
+                <label class="fieldset-label">Foto / Video</label>
+            </fieldset>
+            
+            <button type="submit" class="btn btn-primary mt-4 w-full rounded-full">
+                Post erstellen
+            </button>
+        </form>
 </div>
 
 <script>
