@@ -83,46 +83,15 @@
 </dialog>
 
 <script>
-  let mediaFiles_{{ post.id }} = [
-    {% for media in post.media_files.all %}
-      { 
-        type: '{{ media.media_type }}', 
-        url: '{{ media.media_file.url }}' 
-      },
-    {% endfor %}
-  ];
-  
-  let currentIndex_{{ post.id }} = 0;
-  const imgElement_{{ post.id }} = document.getElementById('current-image-{{ post.id }}');
-  const videoElement_{{ post.id }} = document.getElementById('current-video-{{ post.id }}');
-
-  function changeMedia_{{ post.id }}(direction) {
-    currentIndex_{{ post.id }} += direction;
-    
-    // Boundary checks (zirkuläre Navigation)
-    if (currentIndex_{{ post.id }} < 0) currentIndex_{{ post.id }} = mediaFiles_{{ post.id }}.length - 1;
-    if (currentIndex_{{ post.id }} >= mediaFiles_{{ post.id }}.length) currentIndex_{{ post.id }} = 0;
-    
-    const media_{{ post.id }} = mediaFiles_{{ post.id }}[currentIndex_{{ post.id }}];
-    
-    if (media_{{ post.id }}.type === 'photo') {
-      // Bild anzeigen
-      imgElement_{{ post.id }}.src = media_{{ post.id }}.url;
-      imgElement_{{ post.id }}.style.display = 'block';
-      
-      // Video verstecken und zurückspulen
-      videoElement_{{ post.id }}.style.display = 'none';
-      videoElement_{{ post.id }}.pause();
-      videoElement_{{ post.id }}.currentTime = 0;
-    } else {
-      // Video anzeigen
-      videoElement_{{ post.id }}.src = media_{{ post.id }}.url;
-      videoElement_{{ post.id }}.style.display = 'block';
-      
-      // Bild verstecken
-      imgElement_{{ post.id }}.style.display = 'none';
-    }
-  }
-
-  
-</script>
+  // Initialisierung beim Laden
+  document.addEventListener('DOMContentLoaded', function() {
+      initMediaPlayer({{ post.id }}, [
+          {% for media in post.media_files.all %}
+          { 
+              type: '{{ media.media_type }}', 
+              url: '{{ media.media_file.url }}' 
+          },
+          {% endfor %}
+      ]);
+  });
+  </script>
