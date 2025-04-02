@@ -1,0 +1,136 @@
+{% load post_tags %}
+<div class="card bg-base-100 w-full max-w-96 shadow-sm m-2 max-md:mx-0 shadow-xl">
+    <figure class="h-96 bg-base-200" onclick="viewPost_{{ post.id }}.showModal()">
+      {% with first_media=post.media_files.first %}
+        {% if first_media %}
+          {% if first_media.media_type == 'photo' %}
+            <img src="{{ first_media.media_file.url }}" alt="Hauptbild">
+          {% else %}
+            <video src="{{ first_media.media_file.url }}" controls></video>
+          {% endif %}
+        {% else %}
+          <p>Keine Medien vorhanden</p>
+        {% endif %}
+      {% endwith %}
+    </figure>
+    <div class="card-body shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+      <h2 class="card-title">
+        <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
+      </h2>
+      <p class="m-2">{{ post.description|truncatechars:255 }}</p>
+      <div class="card-actions justify-between">
+        <label class="text-md text-base-300">{{ post.uploaded_at }}</label>
+        <div class="">
+          <form method="post" action="{% url 'like_post' post.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="like" value="1">
+            
+            <button type="submit" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
+                {% if post|has_liked:user %}
+                  <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                {% else %}
+                  <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                {% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+</div>
+<dialog id="viewPost_{{ post.id }}" class="modal">
+  <div class="modal-box">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><i class="fa-regular fa-xmark text-lg"></i></button>
+    </form>
+    <h3 class="text-lg font-bold">Beitrag ansehen</h3>
+    <div class="w-full h-full flex flex-col items-center justify">
+      <div class="w-full h-fit flex flex-row items-center justify-center">
+        <button class="btn btn-ghost text-xl m-4" onclick="changeMedia_{{ post.id }}(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container">
+          {% with media=post.media_files.first %}
+          <div class="carousel-item w-full">
+            {% if media %}
+              {% if media.media_type == 'photo' %}
+                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ post.id }}" class="w-full h-full object-contain">
+                <video src="{{ media.media_file.url }}" id="current-video-{{ post.id }}" controls class="w-full h-full object-contain hidden"></video>
+              {% else %}
+              <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ post.id }}" class="w-full h-full object-contain hidden">
+              <video src="{{ media.media_file.url }}" id="current-video-{{ post.id }}" controls class="w-full h-full object-contain"></video>
+              {% endif %}
+            {% else %}
+              <p>Keine Medien vorhanden</p>
+            {% endif %}
+          </div>
+          {% endwith %}
+        </div>
+        <button class="btn btn-ghost text-xl m-4" onclick="changeMedia_{{ post.id }}(1)"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </div>
+    <div class="p-4 w-full h-fit">
+        <h2 class="card-title">
+          <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
+        </h2>
+        <p class="m-2">{{ post.description }}</p>
+        <div class="card-actions justify-between">
+          <label class="text-md text-base-300">{{ post.uploaded_at }}</label>
+          <div class="">
+            <form method="post" action="{% url 'like_post' post.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="like" value="1">
+              
+              <button type="submit" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
+                  {% if post|has_liked:user %}
+                    <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                  {% else %}
+                    <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                  {% endif %}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+  </div>
+</dialog>
+
+<script>
+  let mediaFiles_{{ post.id }} = [
+    {% for media in post.media_files.all %}
+      { 
+        type: '{{ media.media_type }}', 
+        url: '{{ media.media_file.url }}' 
+      },
+    {% endfor %}
+  ];
+  
+  let currentIndex_{{ post.id }} = 0;
+  const imgElement_{{ post.id }} = document.getElementById('current-image-{{ post.id }}');
+  const videoElement_{{ post.id }} = document.getElementById('current-video-{{ post.id }}');
+
+  function changeMedia_{{ post.id }}(direction) {
+    currentIndex_{{ post.id }} += direction;
+    
+    // Boundary checks (zirkuläre Navigation)
+    if (currentIndex_{{ post.id }} < 0) currentIndex_{{ post.id }} = mediaFiles_{{ post.id }}.length - 1;
+    if (currentIndex_{{ post.id }} >= mediaFiles_{{ post.id }}.length) currentIndex_{{ post.id }} = 0;
+    
+    const media_{{ post.id }} = mediaFiles_{{ post.id }}[currentIndex_{{ post.id }}];
+    
+    if (media_{{ post.id }}.type === 'photo') {
+      // Bild anzeigen
+      imgElement_{{ post.id }}.src = media_{{ post.id }}.url;
+      imgElement_{{ post.id }}.style.display = 'block';
+      
+      // Video verstecken und zurückspulen
+      videoElement_{{ post.id }}.style.display = 'none';
+      videoElement_{{ post.id }}.pause();
+      videoElement_{{ post.id }}.currentTime = 0;
+    } else {
+      // Video anzeigen
+      videoElement_{{ post.id }}.src = media_{{ post.id }}.url;
+      videoElement_{{ post.id }}.style.display = 'block';
+      
+      // Bild verstecken
+      imgElement_{{ post.id }}.style.display = 'none';
+    }
+  }
+</script>

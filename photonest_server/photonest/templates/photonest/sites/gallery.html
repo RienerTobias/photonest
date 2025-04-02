@@ -3,7 +3,7 @@
 {% block content %}
     <main class="w-full h-full flex flex-col items-center">
         <h1 class="text-4xl font-bold m-6">GALLERIE</h1>
-        <button class="btn btn-primary rounded-full fixed bottom-18 right-2 md:right-1/6 z-10" onclick="post_modal.showModal()">
+        <button class="btn btn-primary rounded-full fixed bottom-18 right-2 md:right-1/12 z-10" onclick="createPost_modal.showModal()">
             <i class="fa-regular fa-plus"></i>
             <span class="max-md:hidden ml-2">Beitrag hochladen</span>
         </button>
@@ -13,7 +13,7 @@
             {% endfor %}
         </div>
     </main>
-    <dialog id="post_modal" class="modal">
+    <dialog id="createPost_modal" class="modal">
         <div class="modal-box">
           <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><i class="fa-regular fa-xmark text-lg"></i></button>
