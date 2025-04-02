@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory
 from .forms import PostForm, MediaForm
 from .models import Post
+from django.views.decorators.http import require_POST
+from django.shortcuts import redirect, get_object_or_404
 
 # Create your views here.
 @login_required
@@ -36,3 +38,17 @@ def create_post(request):
         post_form = PostForm(user=request.user)
         media_formset = MediaFormSet()
         return post_form, media_formset,
+
+@login_required
+@require_POST
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+    
+    if 'like' in request.POST:
+        if post.likes.filter(id=user.id).exists():
+            post.likes.remove(user)
+        else:
+            post.likes.add(user)
+    
+    return redirect('gallery')
