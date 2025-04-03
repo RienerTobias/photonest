@@ -17,8 +17,8 @@
       <h2 class="card-title">
         <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
       </h2>
-      <p class="m-2">{{ post.description|truncatechars:255 }}</p>
-      <div class="card-actions justify-between">
+      <p class="m-2 text-base">{{ post.description|truncatechars:255 }}</p>
+      <div class="card-actions justify-between text-base">
         <div class="flex flex-col">
           <label class="text-md text-base-300"><i class="fa-regular fa-calendar"></i>&ensp;{{ post.uploaded_at|date:"SHORT_DATE_FORMAT" }}</label>
           <label class="text-md text-base-300"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
