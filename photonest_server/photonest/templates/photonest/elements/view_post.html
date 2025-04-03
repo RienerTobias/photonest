@@ -69,7 +69,7 @@
         <div class="card-actions justify-between">
           <label class="text-md text-base-300">{{ post.uploaded_at }}</label>
           <div class="">
-            <button onclick="likePost('modal_{{ post.id }}')" id="like-btn-modal_{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
+            <button onclick="likePost('modal_{{ post.id }}')" id="like-btn-modal_{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
               {% if post|has_liked:user %}
                 <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
               {% else %}
