@@ -1,6 +1,6 @@
 {% load post_tags %}
 <div class="card bg-base-100 w-full max-w-96 shadow-sm m-2 max-md:mx-0 shadow-xl">
-    <figure class="h-96 bg-base-200" onclick="viewPost_{{ post.id }}.showModal()">
+    <figure class="h-96 bg-base-200 p-4" onclick="viewPost_{{ post.id }}.showModal()">
       {% with first_media=post.media_files.first %}
         {% if first_media %}
           {% if first_media.media_type == 'photo' %}
@@ -69,7 +69,7 @@
         <div class="card-actions justify-between">
           <label class="text-md text-base-300">{{ post.uploaded_at }}</label>
           <div class="">
-            <button onclick="likePost({{ post.id }})" id="like-btn-{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
+            <button onclick="likePost('modal_{{ post.id }}')" id="like-btn-modal_{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %}">
               {% if post|has_liked:user %}
                 <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
               {% else %}

@@ -1,10 +1,17 @@
 function likePost(postId) {
     const btn = document.getElementById(`like-btn-${postId}`);
-    const countElement = document.getElementById(`like-count-${postId}`);
     const icon = btn.querySelector('i');
-    const counter = btn.querySelector('span')
+    const counter = btn.querySelector('span');
     
-    fetch(`/posts/${postId}/like/`, {
+    let url = "";
+    if(typeof postId == "number"){
+        url = `/posts/${postId}/like/`;
+    }
+    else if(typeof postId == "string"){
+        url = `/posts/${postId.split("_")[1]}/like/`;
+    }
+    
+    fetch(url, {
         method: 'POST',
         headers: {
             'X-CSRFToken': '{{ csrf_token }}',
