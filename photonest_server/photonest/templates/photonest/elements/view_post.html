@@ -77,18 +77,25 @@
         <h2 class="card-title">
           <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
         </h2>
-        <p class="m-2">{{ post.description }}</p>
-        <div class="card-actions justify-between">
+        <p class="m-2 text-base">{{ post.description }}</p>
+        <div class="card-actions justify-between text-base">
           <div class="flex flex-col">
             <label class="text-md text-base-300"><i class="fa-regular fa-calendar"></i>&ensp;{{ post.uploaded_at|date:"SHORT_DATE_FORMAT" }}</label>
             <label class="text-md text-base-300"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
           </div>
           <div class="flex flex-col">
-            <button onclick="likePost('modal_{{ post.id }}')" id="like-btn-modal_{{ post.id }}" class="w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+            <button onclick="likePost('modal_{{ post.id }}')" id="like-btn-modal_{{ post.id }}" class="m-1 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
               {% if post|has_liked:user %}
                 <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
               {% else %}
                 <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+              {% endif %}
+            </button>
+            <button onclick="favorPost('modal_{{ post.id }}')" id="favor-btn-modal_{{ post.id }}" class="m-1 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              {% if post|has_favored:user %}
+                <i class="fa-solid fa-star text-warning"></i> 
+              {% else %}
+                <i class="fa-regular fa-star text-warning"></i> 
               {% endif %}
             </button>
           </div>
