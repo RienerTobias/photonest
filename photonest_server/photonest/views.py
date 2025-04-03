@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from .forms import PostForm
 from .models import Post, Media
 import magic
+
 # Create your views here.
 @login_required
 def home(request):
@@ -61,4 +62,22 @@ def like_post(request, post_id):
     return JsonResponse({
         'status': status,
         'like_count': post.likes.count()
+    })
+
+@require_POST
+@csrf_exempt  # Nur wenn Sie CSRF über Header handhaben
+@permission_required('photonest.favor_post')
+def favor_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+    
+    if post.favorites.filter(id=user.id).exists():
+        post.favorites.remove(user)
+        status = 'false'
+    else:
+        post.favorites.add(user)
+        status = 'true'
+    
+    return JsonResponse({
+        'favored': status,
     })
