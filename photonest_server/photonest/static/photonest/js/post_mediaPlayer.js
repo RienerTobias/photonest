@@ -7,6 +7,11 @@ const mediaPlayers = {};
           imgElement: document.getElementById(`current-image-${postId}`),
           videoElement: document.getElementById(`current-video-${postId}`)
       };
+
+      if (mediaFiles.length() <= 1){
+        document.getElementById(`btn-media-left-${postId}`).classList.add("hidden");
+        document.getElementById(`btn-media-right-${postId}`).classList.add("hidden");
+      }
   }
 
   function changeMedia(postId, direction) {
@@ -31,7 +36,9 @@ const mediaPlayers = {};
           // Video anzeigen
           player.videoElement.src = currentMedia.url;
           player.videoElement.style.display = 'block';
-          
+          player.videoElement.pause();
+          player.videoElement.currentTime = 0;
+
           // Bild verstecken
           player.imgElement.style.display = 'none';
       }
