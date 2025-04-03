@@ -52,7 +52,12 @@ class Post(models.Model):
     def is_favorite(self, user): return self.favorites.filter(id=user.id).exists()
     
     class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
         ordering = ['-uploaded_at']
+        permissions = [
+            ("favor_post", "Can favor a post"),
+        ]
     
     def __str__(self):
         return f"Post #{self.id} von {self.user.username}"
