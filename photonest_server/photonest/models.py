@@ -51,6 +51,14 @@ class Post(models.Model):
     @property
     def is_favorite(self, user): return self.favorites.filter(id=user.id).exists()
     
+    def delete(self, *args, **kwargs):
+        for media in self.media_files.all():
+            # Wenn das Medium nur mit diesem Post verknüpft ist:
+            if media.posts.count() == 1:
+                media.media_file.delete(save=False)  # Datei löschen
+                media.delete()  # Datenbankeintrag löschen
+        super().delete(*args, **kwargs)
+    
     class Meta:
         verbose_name = "Post"
         verbose_name_plural = "Posts"
