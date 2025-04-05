@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from .forms import PostForm
 from .models import Post, Media
 import magic
@@ -81,3 +81,13 @@ def favor_post(request, post_id):
     return JsonResponse({
         'favored': status,
     })
+
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    # Nur der Autor oder ein Admin darf löschen
+    if request.user == post.user or request.user.is_superuser or request.user.has_perm('favor_post'):
+        post.delete()
+    
+    return redirect(request.POST.get('next', 'home'))  # Weiterleitung zur Post-Übersicht
