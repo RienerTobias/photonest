@@ -107,7 +107,10 @@
               {% endif %}
             </div>
           </div>
-          {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
+          <div class="w-full flex flex-row justify-center">
+            {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
+            {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
+          </div>
         </div>
       </div>
   </div>
