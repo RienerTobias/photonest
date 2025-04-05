@@ -12,34 +12,32 @@ const mediaPlayers = {};
         document.getElementById(`btn-media-left-${postId}`).classList.add("invisible");
         document.getElementById(`btn-media-right-${postId}`).classList.add("invisible");
       }
+
+      document.getElementById(`media-download_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
   }
 
   function changeMedia(postId, direction) {
       const player = mediaPlayers[postId];
       if (!player) return;
 
-      // Index aktualisieren mit zirkulärer Navigation
       player.currentIndex = (player.currentIndex + direction + player.mediaFiles.length) % player.mediaFiles.length;
       
       const currentMedia = player.mediaFiles[player.currentIndex];
       
       if (currentMedia.type === 'photo') {
-          // Bild anzeigen
           player.imgElement.src = currentMedia.url;
           player.imgElement.style.display = 'block';
           
-          // Video verstecken und zurückspulen
           player.videoElement.style.display = 'none';
           player.videoElement.pause();
           player.videoElement.currentTime = 0;
       } else {
-          // Video anzeigen
           player.videoElement.src = currentMedia.url;
           player.videoElement.style.display = 'block';
           player.videoElement.pause();
           player.videoElement.currentTime = 0;
 
-          // Bild verstecken
           player.imgElement.style.display = 'none';
       }
+      document.getElementById(`media-download_${postId}`).setAttribute("href", `media/${currentIndex}/download/`);
   }

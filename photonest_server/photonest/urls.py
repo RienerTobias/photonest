@@ -7,4 +7,6 @@ urlpatterns = [
     path('posts/<int:post_id>/like/', views.like_post, name='like_post'),
     path('posts/<int:post_id>/favor/', views.favor_post, name='favor_post'),
     path('posts/<int:post_id>/delete/', views.delete_post, name='delete_post'),
+    path('post/<int:post_id>/download/all/', views.download_all_post_media, name='download_all_post_media'),
+    path('media/<int:media_id>/download/', views.download_single_media, name='download_single_media'),
 ]

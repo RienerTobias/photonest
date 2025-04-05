@@ -3,10 +3,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, FileResponse
 from .forms import PostForm
 from .models import Post, Media
 import magic
+import os
+import zipfile
+from io import BytesIO
 
 # Create your views here.
 @login_required
@@ -22,7 +25,6 @@ def gallery(request):
             post.user = request.user
             post.save()
             
-            # Medien verarbeiten
             for file in request.FILES.getlist('media_files'):
                 mime = magic.Magic(mime=True)
                 content_type = mime.from_buffer(file.read(1024))
@@ -47,7 +49,7 @@ def gallery(request):
     })
 
 @require_POST
-@csrf_exempt  # Nur wenn Sie CSRF über Header handhaben
+@csrf_exempt 
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     user = request.user
@@ -65,7 +67,7 @@ def like_post(request, post_id):
     })
 
 @require_POST
-@csrf_exempt  # Nur wenn Sie CSRF über Header handhaben
+@csrf_exempt
 @permission_required('photonest.favor_post')
 def favor_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -86,8 +88,29 @@ def favor_post(request, post_id):
 def delete_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     
-    # Nur der Autor oder ein Admin darf löschen
     if request.user == post.user or request.user.is_superuser or request.user.has_perm('favor_post'):
         post.delete()
     
-    return redirect(request.POST.get('next', 'home'))  # Weiterleitung zur Post-Übersicht
+    return redirect(request.POST.get('next', 'home'))
+
+@login_required
+def download_all_post_media(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    media_files = post.media_files.all()
+
+    zip_buffer = BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for media in media_files:
+            file_path = media.media_file.path
+            zipf.write(file_path, os.path.basename(file_path))
+
+    zip_buffer.seek(0)
+    response = HttpResponse(zip_buffer, content_type='application/zip')
+    response['Content-Disposition'] = f'attachment; filename="post_{post_id}_media.zip"'
+    return response
+
+@login_required
+def download_single_media(request, media_id):
+    media = get_object_or_404(Media, id=media_id)
+    file_path = media.media_file.path
+    return FileResponse(open(file_path, 'rb'), as_attachment=True)
