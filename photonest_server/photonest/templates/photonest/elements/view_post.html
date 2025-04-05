@@ -75,7 +75,7 @@
         </div>
         <button class="btn btn-ghost text-xl m-4" onclick="changeMedia({{ post.id }}, 1)" id="btn-media-right-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
-      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary" id="media-download_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-2" id="media-download_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
     </div>
     <div class="p-4 w-full h-fit">
         <h2 class="card-title">
