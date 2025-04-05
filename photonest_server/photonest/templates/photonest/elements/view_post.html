@@ -6,7 +6,7 @@
           {% if first_media.media_type == 'photo' %}
             <img src="{{ first_media.media_file.url }}" alt="Hauptbild">
           {% else %}
-            <video src="{{ first_media.media_file.url }}" controls></video>
+            <video src="{{ first_media.media_file.url }}" id="video-preview_{{ post.id }}"></video>
           {% endif %}
         {% else %}
           <p>Keine Medien vorhanden</p>
@@ -91,6 +91,7 @@
                 <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
               {% endif %}
             </button>
+            {% if perms.photonest.favor_post %}
             <button onclick="favorPost('modal_{{ post.id }}')" id="favor-btn-modal_{{ post.id }}" class="m-1 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
               {% if post|has_favored:user %}
                 <i class="fa-solid fa-star text-warning"></i> 
@@ -98,6 +99,7 @@
                 <i class="fa-regular fa-star text-warning"></i> 
               {% endif %}
             </button>
+            {% endif %}
           </div>
         </div>
       </div>
@@ -105,7 +107,6 @@
 </dialog>
 
 <script>
-  // Initialisierung beim Laden
   document.addEventListener('DOMContentLoaded', function() {
       initMediaPlayer({{ post.id }}, [
           {% for media in post.media_files.all %}
@@ -116,4 +117,11 @@
           {% endfor %}
       ]);
   });
+
+  var videoNode_{{ post.id }} = document.getElementById('video-preview_{{ post.id }}');
+  if (videoNode_{{ post.id }} ) {
+    videoNode_{{ post.id }}.addEventListener('click', function(event){
+      event.preventDefault();
+    });
+  }
   </script>

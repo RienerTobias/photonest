@@ -8,9 +8,9 @@ const mediaPlayers = {};
           videoElement: document.getElementById(`current-video-${postId}`)
       };
 
-      if (mediaFiles.length() <= 1){
-        document.getElementById(`btn-media-left-${postId}`).classList.add("hidden");
-        document.getElementById(`btn-media-right-${postId}`).classList.add("hidden");
+      if (Object.keys(mediaFiles).length <= 1){
+        document.getElementById(`btn-media-left-${postId}`).classList.add("invisible");
+        document.getElementById(`btn-media-right-${postId}`).classList.add("invisible");
       }
   }
 
