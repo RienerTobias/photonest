@@ -4,7 +4,6 @@ from .models import Post, SchoolClass
 from django.db.models import Count
 
 class PostFilter(django_filters.FilterSet):
-    # Boolean Filter mit Checkboxen
     only_favorites = django_filters.BooleanFilter(
         method='filter_favorites',
         label='Nur meine Favoriten',
@@ -24,24 +23,22 @@ class PostFilter(django_filters.FilterSet):
         lookup_expr='exact'
     )
     
-    # Andere Filter
     school_class = django_filters.ModelChoiceFilter(
         queryset=SchoolClass.objects.all(),
         label='Klasse',
         empty_label='Alle Klassen'
     )
     
-    # Sortierung
     ordering = django_filters.OrderingFilter(
         choices=[
             ('-uploaded_at', 'Neueste zuerst'),
             ('uploaded_at', 'Älteste zuerst'),
-            ('-likes__count', 'Beliebteste zuerst'),
-            ('likes__count', 'Am wenigsten beliebt'),
+            ('-_like_count', 'Beliebteste zuerst'),
+            ('_like_count', 'Am wenigsten beliebt'),
         ],
         fields={
             'uploaded_at': 'uploaded_at',
-            'likes__count': 'likes__count',
+            '_like_count': '_like_count',
         },
         label='Sortierung',
         initial='-uploaded_at',
@@ -63,5 +60,8 @@ class PostFilter(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.data and not self.request.GET:
-            self.form.initial['ordering'] = '-uploaded_at'
+
+        self.queryset = self.queryset.annotate(_like_count=Count('likes'))
+
+        if not self.data.get('ordering'):
+            self.queryset = self.queryset.order_by('-uploaded_at')
