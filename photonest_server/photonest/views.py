@@ -16,10 +16,6 @@ from io import BytesIO
 
 # Create your views here.
 @login_required
-def home(request):
-    return render(request, 'photonest/base/base.html')
-
-@login_required
 def home(request):    
     return render(request, 'photonest/sites/home.html', {
         'newest_posts': Post.objects.all().order_by('-uploaded_at')[:3],
