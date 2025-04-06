@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.utils.timezone import now
+from django.db.models import Count
 from .forms import PostForm
 from .models import Post, Media
 from .filters import PostFilter
@@ -17,6 +18,17 @@ from io import BytesIO
 @login_required
 def home(request):
     return render(request, 'photonest/base/base.html')
+
+@login_required
+def home(request):    
+    return render(request, 'photonest/sites/home.html', {
+        'newest_posts': Post.objects.all().order_by('-uploaded_at')[:3],
+        'top_posts': Post.objects.all().annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
+        'form': PostForm(),
+        'create_post_url': 'home',
+        'timestamp': now().timestamp(),
+        'max_files': 15,
+    })
 
 @login_required
 def gallery(request):    
@@ -33,11 +45,12 @@ def gallery(request):
         'max_files': 15,
     })
 
-
+@login_required
 @require_POST
 def create_post(request):
     form = PostForm(request.POST, request.FILES)
     if form.is_valid():
+        print("valid")
         post = form.save(commit=False)
         post.user = request.user
         post.save()
