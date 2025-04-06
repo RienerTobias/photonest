@@ -2,14 +2,65 @@
 
 {% block content %}
 {% load static %}
+{% load widget_tweaks %}
 <main class="w-full h-full flex flex-col items-center">
     <h1 class="text-4xl font-bold m-6">GALLERIE</h1>
     <button class="btn btn-primary rounded-full fixed bottom-18 right-2 md:right-1/12 z-10" onclick="createPost_modal.showModal()">
         <i class="fa-regular fa-plus"></i>
         <span class="max-md:hidden ml-2">Beitrag hochladen</span>
     </button>
+
+    <div class="collapse max-md:collapse-arrow bg-base-100 border-base-300 border w-full max-w-96 overflow-visible md:w-1/6 md:collapse-open md:fixed md:left-1 md:top-1">
+      <input type="checkbox" />
+      <div class="collapse-title font-semibold"><i class="fa-regular fa-filter"></i>&ensp;Filter</div>
+      <div class="collapse-content text-sm">
+        <form method="get">
+          <div class="flex flex-col">
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Sortierung</legend>
+              {% render_field filter.form.ordering class="w-full select rounded-full" %}
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Klasse</legend>
+              {% render_field filter.form.school_class class="w-full select rounded-full" %}
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Likes</legend>
+              <label class="fieldset-label" for="{{ filter.form.only_liked.id_for_label }}">
+                {% render_field filter.form.only_liked class="checkbox" %}
+                {{ filter.form.only_liked.label }}
+              </label>
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Favoriten</legend>
+              <label class="fieldset-label" for="{{ filter.form.only_favorites.id_for_label }}">
+                {% render_field filter.form.only_favorites class="checkbox" %}
+                {{ filter.form.only_favorites.label }}
+              </label>
+            </fieldset>
+
+            <fieldset class="fieldset">
+              <legend class="fieldset-legend">Verwendet</legend>
+              <label class="fieldset-label" for="{{ filter.form.is_used.id_for_label }}">
+                {% render_field filter.form.is_used class="checkbox" %}
+                {{ filter.form.is_used.label }}
+              </label>
+            </fieldset>
+              
+          </div>
+          <div class="flex flex-row justify-center mt-4">
+              <a href="?" class="btn btn-error btn-soft m-1"><i class="fa-regular fa-filter-slash"></i>&ensp;Zurücksetzen</a>
+              <button type="submit" class="btn btn-primary m-1"><i class="fa-regular fa-filter"></i>&ensp;Filtern</button>  
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="w-full md:w-2/3 h-full flex flex-col md:flex-row items-center justify-center flex-wrap p-4">
-        {% for post in posts %}
+        {% for post in filter.qs %}
             {% include 'photonest/elements/view_post.html' %}
         {% endfor %}
     </div>
@@ -26,4 +77,12 @@
 <script src="{% static 'photonest/js/post_like.js' %}"></script>
 <script src="{% static 'photonest/js/post_favor.js' %}"></script>
 <script src="{% static 'photonest/js/post_mediaPlayer.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const select = document.getElementById('id_ordering');
+      if (select && !select.value) {
+          select.value = '-uploaded_at';
+      }
+  });
+</script>
 {% endblock %}

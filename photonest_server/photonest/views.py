@@ -6,6 +6,7 @@ from django.forms import formset_factory
 from django.http import JsonResponse, HttpResponse, FileResponse
 from .forms import PostForm
 from .models import Post, Media
+from .filters import PostFilter
 import magic
 import os
 import zipfile
@@ -42,9 +43,13 @@ def gallery(request):
     else:
         form = PostForm()
     
-    posts = Post.objects.all().prefetch_related('media_files')
+    filter = PostFilter(request.GET, queryset=Post.objects.all().prefetch_related('media_files'), request=request)
+
+    if not request.GET.get('ordering'):
+        filter.form.initial['ordering'] = '-uploaded_at'
+
     return render(request, 'photonest/sites/gallery.html', {
-        'posts': posts,
+        'filter': filter,
         'form': form
     })
 
