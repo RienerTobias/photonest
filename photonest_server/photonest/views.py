@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.utils.timezone import now
-from django.db.models import Count
+from django.db.models import Count, Q
 from .forms import PostForm
-from .models import Post, Media
+from .models import Post, Media, SchoolClass
 from .filters import PostFilter
 import magic
 import os
@@ -39,6 +40,18 @@ def gallery(request):
         'create_post_url': 'gallery',
         'timestamp': now().timestamp(),
         'max_files': 15,
+    })
+
+@login_required
+def dashboard(request):    
+    return render(request, 'photonest/sites/dashboard.html', {
+        'top_uploads_users': User.objects.annotate(upload_count=Count('posts')).order_by('-upload_count')[:3],
+        'top_uploads_class': SchoolClass.objects.annotate(upload_count=Count('posts')).order_by('-upload_count')[:3],
+        'top_likes_users': User.objects.annotate(total_likes=Count('posts__likes')).order_by('-total_likes')[:3],
+        'top_likes_class': SchoolClass.objects.annotate(total_likes=Count('posts__likes')).order_by('-total_likes')[:3],
+        'top_used_users': User.objects.annotate(total_uses=Count('posts', filter=Q(posts__is_used=True))).order_by('-total_uses')[:3],
+        'top_used_class': SchoolClass.objects.annotate(total_uses=Count('posts', filter=Q(posts__is_used=True))).order_by('-total_uses')[:3],
+        'timestamp': now().timestamp(),
     })
 
 @login_required
