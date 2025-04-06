@@ -91,7 +91,7 @@
               <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
             </div>
             <div class="flex flex-row-reverse text-xl">
-              <button onclick="likePost('modal_{{ post.id }}')" id="like-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="likePost({{ post.id }})" id="like-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                 {% if post|has_liked:user %}
                   <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
                 {% else %}
@@ -99,7 +99,7 @@
                 {% endif %}
               </button>
               {% if perms.photonest.favor_post %}
-              <button onclick="favorPost('modal_{{ post.id }}')" id="favor-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="favorPost({{ post.id }})" id="favor-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                 {% if post|has_favored:user %}
                   <i class="fa-solid fa-star text-warning"></i> 
                 {% else %}
