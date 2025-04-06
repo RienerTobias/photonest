@@ -33,7 +33,7 @@
                 {{ filter.form.only_liked.label }}
               </label>
             </fieldset>
-
+            {% if rquest.user.is_superuser or perms.photonest.favor_post %}
             <fieldset class="fieldset">
               <legend class="fieldset-legend">Favoriten</legend>
               <label class="fieldset-label" for="{{ filter.form.only_favorites.id_for_label }}">
@@ -49,7 +49,7 @@
                 {{ filter.form.is_used.label }}
               </label>
             </fieldset>
-              
+            {% endif %}
           </div>
           <div class="flex flex-row justify-center mt-4">
               <a href="?" class="btn btn-error btn-soft m-1"><i class="fa-regular fa-filter-slash"></i>&ensp;Zurücksetzen</a>
