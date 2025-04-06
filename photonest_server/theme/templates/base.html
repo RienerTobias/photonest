@@ -14,8 +14,11 @@
 		<meta name="apple-mobile-web-app-title" content="PhotoNest" />
 		<link rel="manifest" href="/static/photonest/favicon/site.webmanifest" />
 
+		<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+
 		{% tailwind_css %}
 	</head>
-
+	
+	{% load django_browser_reload %}
 	{% block base_content %}{% endblock %}
 </html>

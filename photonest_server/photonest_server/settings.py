@@ -54,9 +54,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django_browser_reload",
+    'django_filters',
     'tailwind',
     'theme',
     'widget_tweaks',
+    'colorfield',
     'photonest',
 ]
 
@@ -68,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'photonest_server.urls'
@@ -126,9 +130,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de-at'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Vienna'
 
 USE_I18N = True
 
@@ -161,3 +165,7 @@ INTERNAL_IPS = [
 
 # Login
 LOGIN_REDIRECT_URL = '/'
+
+# Media / Upload
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"

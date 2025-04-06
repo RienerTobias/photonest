@@ -1,2 +1,23 @@
-<div>
+{% url 'home' as home_url %}
+{% url 'gallery' as gallery_url %}
+{% url 'dashboard' as dashboard_url %}
+{% url 'profile' as profile_url %}
+
+<div class="w-full md:w-fit h-fit bg-base-100 rounded-xl flex flex-row drop-shadow-[0_0px_5px_rgba(0,0,0,0.25)] md:px-6 justify-center">
+    <a href="{{ home_url }}" class="m-2 mx-4 flex flex-col items-center">
+        <i class="fa-regular fa-house"></i>
+        <span class="{% if request.path == home_url %}border-b-4{% endif %}">Home</span>
+    </a>
+    <a href="{{ gallery_url }}" class="m-2 mx-4 flex flex-col items-center">
+        <i class="fa-regular fa-rectangle-history"></i>
+        <span class="{% if request.path == gallery_url %}border-b-4{% endif %}">Gallerie</span>
+    </a>
+    <a href="{{ dashboard_url }}" class="m-2 mx-4 flex flex-col items-center">
+        <i class="fa-regular fa-chart-simple"></i>
+        <span class="{% if request.path == dashboard_url %}border-b-4{% endif %}">Dashboard</span>
+    </a>
+    <a href="{{ profile_url }}" class="m-2 mx-4 flex flex-col items-center">
+        <i class="fa-regular fa-user"></i>
+        <span class="{% if request.path == profile_url %}border-b-4{% endif %}">Profil</span>
+    </a>
 </div>

@@ -1,0 +1,159 @@
+{% load post_tags %}
+<div class="w-full max-w-96 m-2 max-md:mx-0 relative">
+{% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
+  <div class="card bg-base-100 w-full max-w-96 shadow-xl">  
+      <figure class="h-96 bg-base-200 p-4" onclick="viewPost_{{ post.id }}.showModal()">
+        {% with first_media=post.media_files.first %}
+          {% if first_media %}
+            {% if first_media.media_type == 'photo' %}
+              <img src="{{ first_media.media_file.url }}" alt="Hauptbild">
+            {% else %}
+              <video src="{{ first_media.media_file.url }}" id="video-preview_{{ post.id }}"></video>
+            {% endif %}
+          {% else %}
+            <p>Keine Medien vorhanden</p>
+          {% endif %}
+        {% endwith %}
+      </figure>
+      <div class="card-body shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <h2 class="card-title">
+          <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
+          {% if post.is_used %}<div class="badge">Verwendet am {{ post.used_at|date:"SHORT_DATE_FORMAT" }}</div>{% endif %}
+        </h2>
+        <p class="m-2 text-base">{{ post.description|truncatechars:255 }}</p>
+        <div class="card-actions justify-between text-base">
+          <div class="flex flex-col text-base-300 dark:text-base-content">
+            <label class="text-md"><i class="fa-regular fa-calendar"></i>&ensp;{{ post.uploaded_at|date:"SHORT_DATE_FORMAT" }}</label>
+            <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
+          </div>
+          <div class="flex flex-row-reverse text-xl self-end">            
+              <button onclick="likePost({{ post.id }})" id="like-btn-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+                  {% if post|has_liked:user %}
+                    <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                  {% else %}
+                    <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                  {% endif %}
+              </button>
+              {% if perms.photonest.favor_post %}
+              <button onclick="favorPost({{ post.id }})" id="favor-btn-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+                {% if post|has_favored:user %}
+                  <i class="fa-solid fa-star text-warning"></i> 
+                {% else %}
+                  <i class="fa-regular fa-star text-warning"></i> 
+                {% endif %}
+              </button>
+              {% endif %}
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+<dialog id="viewPost_{{ post.id }}" class="modal">
+  <div class="modal-box max-h-[95dvh]">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><i class="fa-regular fa-xmark text-lg"></i></button>
+    </form>
+    <h3 class="text-lg font-bold">Beitrag ansehen</h3>
+    <div class="w-full h-full flex flex-col items-center justify">
+      <div class="w-full h-fit flex flex-row items-center justify-center">
+        <button class="btn btn-ghost text-xl mr-2 md:m-4" onclick="changeMedia({{ post.id }}, -1)" id="btn-media-left-{{ post.id }}"><i class="fa-solid fa-chevron-left"></i></button>
+        <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container">
+          {% with media=post.media_files.first %}
+          <div class="carousel-item w-full">
+            {% if media %}
+              {% if media.media_type == 'photo' %}
+                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ post.id }}" class="w-full h-full object-contain">
+                <video src="{{ media.media_file.url }}" id="current-video-{{ post.id }}" controls class="w-full h-full object-contain hidden"></video>
+              {% else %}
+                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ post.id }}" class="w-full h-full object-contain hidden">
+                <video src="{{ media.media_file.url }}" id="current-video-{{ post.id }}" controls class="w-full h-full object-contain"></video>
+              {% endif %}
+            {% else %}
+              <p>Keine Medien vorhanden</p>
+            {% endif %}
+          </div>
+          {% endwith %}
+        </div>
+        <button class="btn btn-ghost text-xl ml-2 md:m-4" onclick="changeMedia({{ post.id }}, 1)" id="btn-media-right-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-2" id="media-download_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
+    </div>
+    <div class="p-4 w-full h-fit">
+        <h2 class="card-title">
+          <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
+          {% if post.is_used %}<div class="badge">Verwendet am {{ post.used_at|date:"SHORT_DATE_FORMAT" }}</div>{% endif %}
+        </h2>
+        <p class="m-2 text-base">{{ post.description }}</p>
+        <div class="card-actions items-center text-base flex flex-col">
+          <div class="flex flex-row justify-between w-full">
+            <div class="flex flex-col text-base-300 dark:text-base-content">
+              <label class="text-md"><i class="fa-regular fa-calendar"></i>&ensp;{{ post.uploaded_at|date:"SHORT_DATE_FORMAT" }}</label>
+              <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
+            </div>
+            <div class="flex flex-row-reverse text-xl">
+              <button onclick="likePost({{ post.id }})" id="like-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+                {% if post|has_liked:user %}
+                  <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                {% else %}
+                  <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                {% endif %}
+              </button>
+              {% if perms.photonest.favor_post %}
+              <button onclick="favorPost({{ post.id }})" id="favor-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+                {% if post|has_favored:user %}
+                  <i class="fa-solid fa-star text-warning"></i> 
+                {% else %}
+                  <i class="fa-regular fa-star text-warning"></i> 
+                {% endif %}
+              </button>
+              {% endif %}
+            </div>
+          </div>
+          <div class="w-full flex flex-row justify-center">
+            {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
+            {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
+          </div>
+        </div>
+      </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+<dialog id="deletePost_{{ post.id }}" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Post löschen?</h3>
+    <p class="py-4">Wollen Sie den Post wirklich löschen?</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
+      </form>
+      <form method="post" action="/posts/{{ post.id }}/delete/">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="gallery">
+        <button type="submit" class="btn btn-error btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Löschen</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      initMediaPlayer({{ post.id }}, [
+          {% for media in post.media_files.all %}
+          { 
+              type: '{{ media.media_type }}', 
+              url: '{{ media.media_file.url }}',
+              id: '{{ media.id }}',
+          },
+          {% endfor %}
+      ]);
+  });
+
+  var videoNode_{{ post.id }} = document.getElementById('video-preview_{{ post.id }}');
+  if (videoNode_{{ post.id }} ) {
+    videoNode_{{ post.id }}.addEventListener('click', function(event){
+      event.preventDefault();
+    });
+  }
+  </script>
