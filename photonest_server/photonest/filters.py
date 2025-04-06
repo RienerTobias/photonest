@@ -17,7 +17,7 @@ class PostFilter(django_filters.FilterSet):
     )
     
     is_used = django_filters.BooleanFilter(
-        field_name='is_used',
+        method='filter_is_used',
         label='Nur verwendete Posts',
         widget=forms.CheckboxInput(attrs={'class': 'checkbox'}),
         lookup_expr='exact'
@@ -56,6 +56,11 @@ class PostFilter(django_filters.FilterSet):
     def filter_liked(self, queryset, name, value):
         if value and hasattr(self, 'request'):
             return queryset.filter(likes=self.request.user)
+        return queryset
+    
+    def filter_is_used(self, queryset, name, value):
+        if value and hasattr(self, 'request'):
+            return queryset.filter(is_used=True)
         return queryset
 
     def __init__(self, *args, **kwargs):

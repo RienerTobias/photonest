@@ -112,10 +112,15 @@ def download_all_post_media(request, post_id):
     zip_buffer.seek(0)
     response = HttpResponse(zip_buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="post_{post_id}_media.zip"'
+    post.mark_as_used()
     return response
 
 @login_required
 def download_single_media(request, media_id):
     media = get_object_or_404(Media, id=media_id)
     file_path = media.media_file.path
+
+    related_posts = media.posts.all()
+    for post in related_posts:
+        post.mark_as_used()
     return FileResponse(open(file_path, 'rb'), as_attachment=True)

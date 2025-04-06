@@ -51,12 +51,18 @@ class Post(models.Model):
     @property
     def is_favorite(self, user): return self.favorites.filter(id=user.id).exists()
     
+    def mark_as_used(self, used_in=None):
+        self.is_used = True
+        self.used_at = timezone.now()
+        if used_in:
+            self.used_in = used_in
+        self.save()
+
     def delete(self, *args, **kwargs):
         for media in self.media_files.all():
-            # Wenn das Medium nur mit diesem Post verknüpft ist:
             if media.posts.count() == 1:
-                media.media_file.delete(save=False)  # Datei löschen
-                media.delete()  # Datenbankeintrag löschen
+                media.media_file.delete(save=False)
+                media.delete()
         super().delete(*args, **kwargs)
     
     class Meta:
