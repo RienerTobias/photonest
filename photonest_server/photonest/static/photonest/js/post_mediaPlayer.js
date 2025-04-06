@@ -39,5 +39,5 @@ const mediaPlayers = {};
 
           player.imgElement.style.display = 'none';
       }
-      document.getElementById(`media-download_${postId}`).setAttribute("href", `media/${currentIndex}/download/`);
+      document.getElementById(`media-download_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
   }
