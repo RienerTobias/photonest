@@ -3,9 +3,9 @@
 <div class="container mx-auto px-4">
     <!-- Post-Formular -->
     <div class="bg-base-100 rounded-lg p-6 mb-8">
-        <form method="post" enctype="multipart/form-data" id="postForm">
+        <form method="post" enctype="multipart/form-data" id="postForm" action="{% url 'create_post' %}">
             {% csrf_token %}
-            
+            <input type="hidden" name="next" value="{{ create_post_url }}">
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Klasse</legend>
                 {{ form.school_class|add_class:"w-full select rounded-full" }}
@@ -21,7 +21,8 @@
                 <input type="file" name="media_files" multiple 
                        accept="image/*,video/*" 
                        class="w-full file-input rounded-full"
-                       id="mediaUpload">
+                       id="mediaUpload"
+                       required onchange="validateFiles()">
                 <label class="fieldset-label">Foto / Video</label>
             </fieldset>
             
@@ -149,4 +150,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+function validateFiles() {
+  const fileUpload = document.getElementById("mediaUpload");
+  const files = fileUpload.files;
+  
+  if (files.length > {{ max_files }}) {
+    alert("Sie können maximal {{ max_files }} Dateien hochladen.");
+    fileUpload.value = ""; // Löscht die Auswahl
+    return false;
+  }
+  
+  return true;
+}
 </script>

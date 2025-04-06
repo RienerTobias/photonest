@@ -32,7 +32,7 @@ function favorPost(postId) {
         } else {
             icon.classList.remove('fa-solid');
             icon.classList.add('fa-regular');
-            icon_moal.classList.remove('fa-solid');
+            icon_modal.classList.remove('fa-solid');
             icon_modal.classList.add('fa-regular');
             btn.classList.remove('favored');
             btn_modal.classList.remove('favored');

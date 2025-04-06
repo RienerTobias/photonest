@@ -74,9 +74,9 @@
       {% include 'photonest/elements/create_post.html' %}
     </div>
   </dialog>
-<script src="{% static 'photonest/js/post_like.js' %}"></script>
-<script src="{% static 'photonest/js/post_favor.js' %}"></script>
-<script src="{% static 'photonest/js/post_mediaPlayer.js' %}"></script>
+<script src="{% static 'photonest/js/post_like.js' %}?v={{ timestamp }}"></script>
+<script src="{% static 'photonest/js/post_favor.js' %}?v={{ timestamp }}"></script>
+<script src="{% static 'photonest/js/post_mediaPlayer.js' %}?v={{ timestamp }}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
       const select = document.getElementById('id_ordering');

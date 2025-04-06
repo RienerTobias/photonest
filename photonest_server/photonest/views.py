@@ -4,6 +4,7 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
 from django.http import JsonResponse, HttpResponse, FileResponse
+from django.utils.timezone import now
 from .forms import PostForm
 from .models import Post, Media
 from .filters import PostFilter
@@ -18,31 +19,7 @@ def home(request):
     return render(request, 'photonest/base/base.html')
 
 @login_required
-def gallery(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.user = request.user
-            post.save()
-            
-            for file in request.FILES.getlist('media_files'):
-                mime = magic.Magic(mime=True)
-                content_type = mime.from_buffer(file.read(1024))
-                file.seek(0)
-                
-                media_type = 'photo' if content_type.startswith('image/') else 'video'
-                
-                media = Media.objects.create(
-                    media_file=file,
-                    media_type='photo' if content_type.startswith('image/') else 'video'
-                )
-                post.media_files.add(media) 
-            
-            return redirect('gallery')
-    else:
-        form = PostForm()
-    
+def gallery(request):    
     filter = PostFilter(request.GET, queryset=Post.objects.all().prefetch_related('media_files'), request=request)
 
     if not request.GET.get('ordering'):
@@ -50,9 +27,37 @@ def gallery(request):
 
     return render(request, 'photonest/sites/gallery.html', {
         'filter': filter,
-        'form': form
+        'form': PostForm(),
+        'create_post_url': 'gallery',
+        'timestamp': now().timestamp(),
+        'max_files': 15,
     })
 
+
+@require_POST
+def create_post(request):
+    form = PostForm(request.POST, request.FILES)
+    if form.is_valid():
+        post = form.save(commit=False)
+        post.user = request.user
+        post.save()
+        
+        for file in request.FILES.getlist('media_files'):
+            mime = magic.Magic(mime=True)
+            content_type = mime.from_buffer(file.read(1024))
+            file.seek(0)
+            
+            media_type = 'photo' if content_type.startswith('image/') else 'video'
+            
+            media = Media.objects.create(
+                media_file=file,
+                media_type='photo' if content_type.startswith('image/') else 'video'
+            )
+            post.media_files.add(media) 
+        
+    return redirect(request.POST.get('next', 'home'))
+
+@login_required
 @require_POST
 @csrf_exempt 
 def like_post(request, post_id):
@@ -71,6 +76,7 @@ def like_post(request, post_id):
         'like_count': post.likes.count()
     })
 
+@login_required
 @require_POST
 @csrf_exempt
 @permission_required('photonest.favor_post')
