@@ -13,6 +13,7 @@ COPY ./photonest_server .
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
+RUN python manage.py migrate
 
 # Expose Port
 EXPOSE 8000
