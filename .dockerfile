@@ -18,9 +18,6 @@ ENV ALLOWED_HOSTS=*
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
-# Run Migrate
-RUN python manage.py migrate
-
 # Expose Port
 EXPOSE 8000
 
