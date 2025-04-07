@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block base_content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<body class="w-full h-fit min-h-screen flex flex-rol justify-center items-center bg-base-300">
+    <div class="flex flex-col items-center bg-base-100 p-8 rounded-3xl shadow-2xl">
+        <p>Sie wurden abgemeldet!</p>
+        <a href="{% url 'login'%}" class="btn btn-primary m-2">Anmelden</a>
+    </div>
+</body>
+
+{% endblock %}

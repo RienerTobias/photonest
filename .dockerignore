@@ -1,0 +1,15 @@
+*.md
+
+# git files
+.gitignore
+/.git
+
+# virtual environment
+/.venv
+
+# project files
+db.sqlite3
+.env
+
+# nodejs + npm
+/node_modules

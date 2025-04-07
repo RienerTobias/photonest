@@ -1,0 +1,165 @@
+{% load static %}
+{% load widget_tweaks %}
+<div class="container mx-auto px-4">
+    <!-- Post-Formular -->
+    <div class="bg-base-100 rounded-lg p-6 mb-8">
+        <form method="post" enctype="multipart/form-data" id="postForm" action="{% url 'create_post' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ create_post_url }}">
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Klasse</legend>
+                {{ form.school_class|add_class:"w-full select rounded-full" }}
+              </fieldset>
+            
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Beschreibung</legend>
+                {{ form.description|add_class:"w-full textarea h-24" }}
+                <label class="fieldset-label">max. 500 Zeichen</label>
+            </fieldset>
+
+            <fieldset class="fieldset">
+                <legend class="fieldset-legend">Dateien auswählen</legend>
+                <input type="file" name="media_files" multiple 
+                       accept="image/*,video/*" 
+                       class="w-full file-input rounded-full"
+                       id="mediaUpload"
+                       required onchange="validateFiles()">
+                <label class="fieldset-label">Foto / Video</label>
+            </fieldset>
+            
+            <button type="submit" class="btn btn-primary mt-4 w-full rounded-full">
+                Post erstellen
+            </button>
+        </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formContainer = document.getElementById('mediaForms');
+    const addButton = document.getElementById('addMedia');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+    let formCount = parseInt(totalForms.value) || 0;
+
+    function updateOrderValues() {
+        const forms = document.querySelectorAll('.media-form:not([style*="display: none"])');
+        forms.forEach((form, index) => {
+            const orderInput = form.querySelector('input[type="number"]');
+            if (orderInput) {
+                orderInput.value = index;
+            }
+        });
+    }
+
+    function detectMediaType(fileInput) {
+        const file = fileInput.files[0];
+        if (!file) return;
+        
+        const formGroup = fileInput.closest('.media-form');
+        const mediaTypeSelect = formGroup.querySelector('select[name*="-media_type"]');
+        
+        if (!mediaTypeSelect) return;
+        
+        if (file.type.startsWith('image/')) {
+            mediaTypeSelect.value = 'photo';
+        } else if (file.type.startsWith('video/')) {
+            mediaTypeSelect.value = 'video';
+        }
+        
+        const fileNameDisplay = formGroup.querySelector('.file-name-display');
+        if (fileNameDisplay) {
+            fileNameDisplay.textContent = file.name;
+        }
+    }
+
+    addButton.addEventListener('click', function() {
+        if (formCount >= 5) {
+            alert('Maximal 5 Medien erlaubt');
+            return;
+        }
+        
+        const newForm = document.createElement('div');
+        newForm.className = 'media-form mb-1 p-1 flex flex-row items-center justify-between';
+        newForm.innerHTML = `
+            <input type="hidden" name="form-${formCount}-id" id="id_form-${formCount}-id">
+            <div class="m-1">
+                <fieldset class="fieldset">
+                    <legend class="fieldset-legend">Datei hochladen</legend>
+                    <input type="file" name="form-${formCount}-media_file" id="id_form-${formCount}-media_file" accept="image/*,video/*" required class="file-input">
+                    <label class="fieldset-label">Foto & Video</label>
+                </fieldset>
+                <div class="hidden">
+                    {{ form.media_type | attr:"class:media-type-select" }}
+                    {{ form.order }}
+                </div>
+            </div>
+            <button type="button" class="btn btn-error btn-sm mt-2 rounded-full btn-outline remove-media m-1 hover:btn-soft">
+                <i class="fa-regular fa-trash remove-media"></i>
+            </button>
+        `;
+        
+        formContainer.appendChild(newForm);
+        formCount++;
+        totalForms.value = formCount;
+        updateOrderValues();
+        
+        newForm.querySelector('input[type="file"]').addEventListener('change', function() {
+            detectMediaType(this);
+        });
+    });
+
+    document.querySelectorAll('#mediaForms input[type="file"]').forEach(input => {
+        input.addEventListener('change', function() {
+            detectMediaType(this);
+        });
+    });
+
+    formContainer.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-media')) {
+            const formToRemove = e.target.closest('.media-form');
+            if (formToRemove) {
+                // Mark the form for deletion if it has an ID
+                const idInput = formToRemove.querySelector('input[name$="-id"]');
+                if (idInput && idInput.value) {
+                    const deleteInput = document.createElement('input');
+                    deleteInput.type = 'hidden';
+                    deleteInput.name = idInput.name.replace('-id', '-DELETE');
+                    deleteInput.value = 'on';
+                    formToRemove.appendChild(deleteInput);
+                    formToRemove.style.display = 'none';
+                } else {
+                    formContainer.removeChild(formToRemove);
+                }
+                formCount--;
+                totalForms.value = formCount;
+                updateFormIndices();
+                updateOrderValues();
+            }
+        }
+    });
+    
+    function updateFormIndices() {
+        const forms = document.querySelectorAll('.media-form:not([style*="display: none"])');
+        forms.forEach((form, index) => {
+            form.querySelectorAll('input, select').forEach(input => {
+                const name = input.name.replace(/form-\d+-/, `form-${index}-`);
+                const id = input.id.replace(/form-\d+-/, `form-${index}-`);
+                input.name = name;
+                input.id = id;
+            });
+        });
+    }
+});
+
+function validateFiles() {
+  const fileUpload = document.getElementById("mediaUpload");
+  const files = fileUpload.files;
+  
+  if (files.length > {{ max_files }}) {
+    alert("Sie können maximal {{ max_files }} Dateien hochladen.");
+    fileUpload.value = "";
+    return false;
+  }
+  
+  return true;
+}
+</script>

@@ -1,0 +1,24 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+    <title>{% block 'title' %}{% endblock %}</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+		<link rel="icon" type="image/png" href="/static/photonest/favicon/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/svg+xml" href="/static/photonest/favicon/favicon.svg" />
+		<link rel="shortcut icon" href="/static/photonest/favicon/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/static/photonest/favicon/apple-touch-icon.png" />
+		<meta name="apple-mobile-web-app-title" content="PhotoNest" />
+		<link rel="manifest" href="/static/photonest/favicon/site.webmanifest" />
+
+		<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
+
+		{% tailwind_css %}
+	</head>
+	
+	{% load django_browser_reload %}
+	{% block base_content %}{% endblock %}
+</html>

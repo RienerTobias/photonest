@@ -1,0 +1,190 @@
+{% extends 'photonest/base/base.html' %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+{% load general_tags %}
+<main class="w-full h-full flex flex-col items-center">
+    <h1 class="text-4xl font-bold m-6">DASHBOARD</h1>
+
+    <h1 class="text-2xl font-bold m-6 mb-2">Meiste Uploads</h1>
+    <div class="w-full md:w-2/3 flex flex-col md:flex-row items-center justify-center">
+        <div class="flex flex-col w-fit h-fit items-center m-2">
+            <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-user"></i>&ensp;Benutzer</h1>
+            <div class="stats shadow w-full max-w-96">
+                {% with user=top_uploads_users|get_item:1 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-2"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.posts.all.count }}&ensp;<i class="fa-regular fa-upload text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+
+                {% with user=top_uploads_users|get_item:0 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-1"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.posts.all.count }}&ensp;<i class="fa-regular fa-upload text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+            
+                {% with user=top_uploads_users|get_item:2 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-3"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.posts.all.count }}&ensp;<i class="fa-regular fa-upload text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+            </div>
+        </div>
+        <div class="flex flex-col w-fit h-fit items-center m-2">
+            <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-users"></i>&ensp;Klassen</h1>
+            <div class="stats shadow w-full max-w-96">
+                {% with class=top_uploads_class|get_item:1 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-2"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.posts.all.count }}&ensp;<i class="fa-regular fa-upload text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+
+                {% with class=top_uploads_class|get_item:0 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-1"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.posts.all.count }}&ensp;<i class="fa-regular fa-upload text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+            
+                {% with class=top_uploads_class|get_item:2 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-3"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.posts.all.count }}&ensp;<i class="fa-regular fa-upload text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+            </div>
+        </div>
+    </div>
+
+    <h1 class="text-2xl font-bold m-6 mb-2">Meiste Likes</h1>
+    <div class="w-full md:w-2/3 flex flex-col md:flex-row items-center justify-center">
+        <div class="flex flex-col w-fit h-fit items-center m-2">
+            <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-user"></i>&ensp;Benutzer</h1>
+            <div class="stats shadow w-full max-w-96">
+                {% with user=top_likes_users|get_item:1 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-2"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.total_likes }}&ensp;<i class="fa-regular fa-heart text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+
+                {% with user=top_likes_users|get_item:0 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-1"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.total_likes }}&ensp;<i class="fa-regular fa-heart text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+            
+                {% with user=top_likes_users|get_item:2 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-3"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.total_likes }}&ensp;<i class="fa-regular fa-heart text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+            </div>
+        </div>
+        <div class="flex flex-col w-fit h-fit items-center m-2">
+            <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-users"></i>&ensp;Klassen</h1>
+            <div class="stats shadow w-full max-w-96">
+                {% with class=top_likes_class|get_item:1 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-2"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.total_likes }}&ensp;<i class="fa-regular fa-heart text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+
+                {% with class=top_likes_class|get_item:0 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-1"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.total_likes }}&ensp;<i class="fa-regular fa-heart text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+            
+                {% with class=top_likes_class|get_item:2 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-3"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.total_likes }}&ensp;<i class="fa-regular fa-heart text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+            </div>
+        </div>
+    </div>
+
+    <h1 class="text-2xl font-bold m-6 mb-2">Meiste Verwendungen</h1>
+    <div class="w-full md:w-2/3 flex flex-col md:flex-row items-center justify-center">
+        <div class="flex flex-col w-fit h-fit items-center m-2">
+            <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-user"></i>&ensp;Benutzer</h1>
+            <div class="stats shadow w-full max-w-96">
+                {% with user=top_used_users|get_item:1 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-2"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.total_uses }}&ensp;<i class="fa-regular fa-check text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+
+                {% with user=top_used_users|get_item:0 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-1"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.total_uses }}&ensp;<i class="fa-regular fa-check text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+            
+                {% with user=top_used_users|get_item:2 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-3"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ user.total_uses }}&ensp;<i class="fa-regular fa-check text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ user }}</div>
+                </div>
+                {% endwith%}
+            </div>
+        </div>
+        <div class="flex flex-col w-fit h-fit items-center m-2">
+            <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-users"></i>&ensp;Klassen</h1>
+            <div class="stats shadow w-full max-w-96">
+                {% with class=top_used_class|get_item:1 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-2"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.total_uses }}&ensp;<i class="fa-regular fa-check text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+
+                {% with class=top_used_class|get_item:0 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-1"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.total_uses }}&ensp;<i class="fa-regular fa-check text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+            
+                {% with class=top_used_class|get_item:2 %}
+                <div class="stat w-32 p-4">
+                    <div class="stat-title text-center text-lg text-primary dark:text-white"><i class="fa-solid fa-circle-3"></i></div>
+                    <div class="stat-value text-center flex items-center justify-center">{{ class.total_uses }}&ensp;<i class="fa-regular fa-check text-base"></i></div>
+                    <div class="stat-desc text-center w-full">{{ class }}</div>
+                </div>
+                {% endwith%}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
