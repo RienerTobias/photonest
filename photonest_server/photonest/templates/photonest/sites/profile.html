@@ -1,0 +1,111 @@
+{% extends 'photonest/base/base.html' %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+<main class="w-full h-full flex flex-col items-center pb-12">
+    <h1 class="text-4xl font-bold m-6">PROFIL</h1>
+
+    <a href="" class="bt btn-ghost top-4 right-4 fixed text-2xl"><i class="fa-regular fa-gear"></i></a>
+
+    <div class="avatar">
+        <div class="w-24 rounded-full">
+          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ request.user }}" alt="avatar"/>
+        </div>
+    </div>
+
+    <p class="text-2xl mt-4"><i class="fa-regular fa-user"></i>&ensp;{{ user }}</p>
+
+    <div class="divider w-4/5 self-center"></div>
+
+    <div class="flex flex-col items-center">
+        <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-upload"></i>&ensp;Uploads</h1>
+        <div class="avatar-group">
+            <div class="flex flex-col items-center">
+              <div class="avatar">
+                <div class="w-20">
+                  <img src="{% static 'photonest/images/medal-bronze.svg' %}" class="{% if post_count < 10 %}grayscale blur-sm{% endif %}"/>
+                </div>
+              </div>
+              <p class="text-md font-bold {% if post_count < 50 %}text-base-content/50{% endif %}">10</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="avatar">
+                <div class="w-20">
+                  <img src="{% static 'photonest/images/medal-silver.svg' %}" class="{% if post_count < 25 %}grayscale blur-sm{% endif %}"/>
+                </div>
+              </div>
+              <p class="text-md font-bold {% if post_count < 50 %}text-base-content/50{% endif %}">25</p>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="avatar">
+                <div class="w-20">
+                  <img src="{% static 'photonest/images/medal-gold.svg' %}" class="{% if post_count < 50 %}grayscale blur-sm{% endif %}"/>
+                </div>
+              </div>
+              <p class="text-md font-bold {% if post_count < 50 %}text-base-content/50{% endif %}">50</p>
+            </div>
+          </div>
+    </div>
+
+    <div class="flex flex-col items-center">
+      <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-heart"></i>&ensp;Likes</h1>
+      <div class="avatar-group">
+          <div class="flex flex-col items-center">
+            <div class="avatar">
+              <div class="w-20">
+                <img src="{% static 'photonest/images/medal-bronze.svg' %}" class="{% if like_count < 10 %}grayscale blur-sm{% endif %}"/>
+              </div>
+            </div>
+            <p class="text-md font-bold {% if like_count < 50 %}text-base-content/50{% endif %}">10</p>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="avatar">
+              <div class="w-20">
+                <img src="{% static 'photonest/images/medal-silver.svg' %}" class="{% if like_count < 25 %}grayscale blur-sm{% endif %}"/>
+              </div>
+            </div>
+            <p class="text-md font-bold {% if like_count < 50 %}text-base-content/50{% endif %}">25</p>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="avatar">
+              <div class="w-20">
+                <img src="{% static 'photonest/images/medal-gold.svg' %}" class="{% if like_count < 50 %}grayscale blur-sm{% endif %}"/>
+              </div>
+            </div>
+            <p class="text-md font-bold {% if like_count < 50 %}text-base-content/50{% endif %}">50</p>
+          </div>
+        </div>
+  </div>
+
+  <div class="flex flex-col items-center">
+    <h1 class="text-xl font-bold m-6"><i class="fa-regular fa-check"></i>&ensp;Verwendungen</h1>
+    <div class="avatar-group">
+        <div class="flex flex-col items-center">
+          <div class="avatar">
+            <div class="w-20">
+              <img src="{% static 'photonest/images/medal-bronze.svg' %}" class="{% if used_count < 10 %}grayscale blur-sm{% endif %}"/>
+            </div>
+          </div>
+          <p class="text-md font-bold {% if used_count < 50 %}text-base-content/50{% endif %}">10</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="avatar">
+            <div class="w-20">
+              <img src="{% static 'photonest/images/medal-silver.svg' %}" class="{% if used_count < 25 %}grayscale blur-sm{% endif %}"/>
+            </div>
+          </div>
+          <p class="text-md font-bold {% if used_count < 50 %}text-base-content/50{% endif %}">25</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="avatar">
+            <div class="w-20">
+              <img src="{% static 'photonest/images/medal-gold.svg' %}" class="{% if used_count < 50 %}grayscale blur-sm{% endif %}"/>
+            </div>
+          </div>
+          <p class="text-md font-bold {% if used_count < 50 %}text-base-content/50{% endif %}">50</p>
+        </div>
+      </div>
+  </div>
+</main>
+{% endblock %}
