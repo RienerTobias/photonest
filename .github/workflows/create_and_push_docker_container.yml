@@ -30,4 +30,4 @@ jobs:
           context: .
           file: docker/Dockerfile  # Pfad zum Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner|lower }}/${{ github.repository|split('/') | last | lower }}:latest
+          tags: ghcr.io/rienertobias/photonest:latest
