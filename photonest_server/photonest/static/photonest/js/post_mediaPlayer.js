@@ -16,7 +16,7 @@ const mediaPlayers = {};
       document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
   }
 
-  function changeMedia(postId, direction) {
+  function changeMedia(postId, pageprefix, direction) {
       const player = mediaPlayers[postId];
       if (!player) return;
 
