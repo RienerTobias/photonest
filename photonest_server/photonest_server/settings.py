@@ -65,6 +65,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -142,18 +143,30 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Media / Upload
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "/media/"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = '/static/'
 
 STATIC_DIRS = [
     BASE_DIR / 'static',
     BASE_DIR / 'photonest' / 'static',
 ]
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "LOCATION": MEDIA_ROOT,
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -169,7 +182,3 @@ INTERNAL_IPS = [
 
 # Login
 LOGIN_REDIRECT_URL = '/'
-
-# Media / Upload
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = "/media/"
