@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./photonest_server .
 
 RUN mkdir -p /app/staticfiles && \
-    chown -R myuser:myuser /app/staticfiles
+    chown -R root:root /app/staticfiles
 
 # Collect static files
 RUN python manage.py collectstatic --noinput
