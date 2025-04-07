@@ -25,6 +25,7 @@ def home(request):
         'create_post_url': 'home',
         'timestamp': now().timestamp(),
         'max_files': 15,
+        'pageprefix': 'home',
     })
 
 @login_required
@@ -40,6 +41,7 @@ def gallery(request):
         'create_post_url': 'gallery',
         'timestamp': now().timestamp(),
         'max_files': 15,
+        'pageprefix': 'gallery'
     })
 
 @login_required

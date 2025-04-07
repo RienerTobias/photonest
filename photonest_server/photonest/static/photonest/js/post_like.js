@@ -1,6 +1,6 @@
-function likePost(postId) {
-    const btn = document.getElementById(`like-btn-${postId}`);
-    const btn_modal = document.getElementById(`like-btn-modal_${postId}`);
+function likePost(postId, pageprefix) {
+    const btn = document.getElementById(`like-btn-${pageprefix}-${postId}`);
+    const btn_modal = document.getElementById(`like-btn-${pageprefix}-modal_${postId}`);
     const icon = btn.querySelector('i');
     const icon_modal = btn_modal.querySelector('i');
     const counter = btn.querySelector('span');

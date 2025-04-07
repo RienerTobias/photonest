@@ -1,6 +1,6 @@
-function favorPost(postId) {
-    const btn = document.getElementById(`favor-btn-${postId}`);
-    const btn_modal = document.getElementById(`favor-btn-modal_${postId}`);
+function favorPost(postId, pageprefix) {
+    const btn = document.getElementById(`favor-btn-${pageprefix}-${postId}`);
+    const btn_modal = document.getElementById(`favor-btn-${pageprefix}-modal_${postId}`);
     const icon = btn.querySelector('i');
     const icon_modal = btn_modal.querySelector('i');
 

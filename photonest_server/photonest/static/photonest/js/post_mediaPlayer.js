@@ -1,19 +1,19 @@
 const mediaPlayers = {};
 
-  function initMediaPlayer(postId, mediaFiles) {
+  function initMediaPlayer(postId, pageprefix, mediaFiles) {
       mediaPlayers[postId] = {
           currentIndex: 0,
           mediaFiles: mediaFiles,
-          imgElement: document.getElementById(`current-image-${postId}`),
-          videoElement: document.getElementById(`current-video-${postId}`)
+          imgElement: document.getElementById(`current-image-${pageprefix}-${postId}`),
+          videoElement: document.getElementById(`current-video-${pageprefix}-${postId}`)
       };
 
       if (Object.keys(mediaFiles).length <= 1){
-        document.getElementById(`btn-media-left-${postId}`).classList.add("invisible");
-        document.getElementById(`btn-media-right-${postId}`).classList.add("invisible");
+        document.getElementById(`btn-media-left-${pageprefix}-${postId}`).classList.add("invisible");
+        document.getElementById(`btn-media-right-${pageprefix}-${postId}`).classList.add("invisible");
       }
 
-      document.getElementById(`media-download_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
+      document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
   }
 
   function changeMedia(postId, direction) {
@@ -39,5 +39,5 @@ const mediaPlayers = {};
 
           player.imgElement.style.display = 'none';
       }
-      document.getElementById(`media-download_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
+      document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
   }

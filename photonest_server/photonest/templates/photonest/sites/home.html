@@ -12,16 +12,20 @@
 
     <h1 class="text-2xl font-bold m-6">Neueste Posts</h1>
     <div class="w-full md:w-2/3 h-full flex flex-col md:flex-row items-center justify-center flex-wrap p-4">
+        {% with pageprefix='homenew' %}
         {% for post in newest_posts %}
             {% include 'photonest/elements/view_post.html' %}
         {% endfor %}
+        {% endwith %}
     </div>
 
     <h1 class="text-2xl font-bold m-6">Beste Posts</h1>
     <div class="w-full md:w-2/3 h-full flex flex-col md:flex-row items-center justify-center flex-wrap p-4">
+        {% with pageprefix='hometop' %}
         {% for post in top_posts %}
             {% include 'photonest/elements/view_post.html' %}
         {% endfor %}
+        {% endwith%}
     </div>
 </main>
 <dialog id="createPost_modal" class="modal">

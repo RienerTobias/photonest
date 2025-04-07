@@ -1,14 +1,14 @@
 {% load post_tags %}
 <div class="w-full max-w-96 m-2 max-md:mx-0 relative">
-{% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
+{% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
   <div class="card bg-base-100 w-full max-w-96 shadow-xl">  
-      <figure class="h-96 bg-base-200 p-4" onclick="viewPost_{{ post.id }}.showModal()">
+      <figure class="h-96 bg-base-200 p-4" onclick="viewPost{{ pageprefix }}_{{ post.id }}.showModal()">
         {% with first_media=post.media_files.first %}
           {% if first_media %}
             {% if first_media.media_type == 'photo' %}
               <img src="{{ first_media.media_file.url }}" alt="Hauptbild">
             {% else %}
-              <video src="{{ first_media.media_file.url }}" id="video-preview_{{ post.id }}"></video>
+              <video src="{{ first_media.media_file.url }}" id="video-preview-{{ pageprefix }}_{{ post.id }}"></video>
             {% endif %}
           {% else %}
             <p>Keine Medien vorhanden</p>
@@ -30,7 +30,7 @@
             <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
           </div>
           <div class="flex flex-row-reverse text-xl self-end">            
-              <button onclick="likePost({{ post.id }})" id="like-btn-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                   {% if post|has_liked:user %}
                     <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
                   {% else %}
@@ -38,7 +38,7 @@
                   {% endif %}
               </button>
               {% if perms.photonest.favor_post %}
-              <button onclick="favorPost({{ post.id }})" id="favor-btn-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                 {% if post|has_favored:user %}
                   <i class="fa-solid fa-star text-warning"></i> 
                 {% else %}
@@ -51,7 +51,7 @@
       </div>
   </div>
 </div>
-<dialog id="viewPost_{{ post.id }}" class="modal">
+<dialog id="viewPost{{ pageprefix }}_{{ post.id }}" class="modal">
   <div class="modal-box max-h-[95dvh]">
     <form method="dialog">
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><i class="fa-regular fa-xmark text-lg"></i></button>
@@ -59,17 +59,17 @@
     <h3 class="text-lg font-bold">Beitrag ansehen</h3>
     <div class="w-full h-full flex flex-col items-center justify">
       <div class="w-full h-fit flex flex-row items-center justify-center">
-        <button class="btn btn-ghost text-xl mr-2 md:m-4" onclick="changeMedia({{ post.id }}, -1)" id="btn-media-left-{{ post.id }}"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="btn btn-ghost text-xl mr-2 md:m-4" onclick="changeMedia({{ post.id }}, -1)" id="btn-media-left-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-left"></i></button>
         <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container">
           {% with media=post.media_files.first %}
           <div class="carousel-item w-full">
             {% if media %}
               {% if media.media_type == 'photo' %}
-                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ post.id }}" class="w-full h-full object-contain">
-                <video src="{{ media.media_file.url }}" id="current-video-{{ post.id }}" controls class="w-full h-full object-contain hidden"></video>
+                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain">
+                <video src="{{ media.media_file.url }}" id="current-video-{{ pageprefix }}-{{ post.id }}" controls class="w-full h-full object-contain hidden"></video>
               {% else %}
-                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ post.id }}" class="w-full h-full object-contain hidden">
-                <video src="{{ media.media_file.url }}" id="current-video-{{ post.id }}" controls class="w-full h-full object-contain"></video>
+                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain hidden">
+                <video src="{{ media.media_file.url }}" id="current-video-{{ pageprefix }}-{{ post.id }}" controls class="w-full h-full object-contain"></video>
               {% endif %}
             {% else %}
               <p>Keine Medien vorhanden</p>
@@ -77,9 +77,9 @@
           </div>
           {% endwith %}
         </div>
-        <button class="btn btn-ghost text-xl ml-2 md:m-4" onclick="changeMedia({{ post.id }}, 1)" id="btn-media-right-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
+        <button class="btn btn-ghost text-xl ml-2 md:m-4" onclick="changeMedia({{ post.id }}, 1)" id="btn-media-right-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
-      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-2" id="media-download_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-2" id="media-download-{{ pageprefix }}_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
     </div>
     <div class="p-4 w-full h-fit">
         <h2 class="card-title">
@@ -94,7 +94,7 @@
               <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
             </div>
             <div class="flex flex-row-reverse text-xl">
-              <button onclick="likePost({{ post.id }})" id="like-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                 {% if post|has_liked:user %}
                   <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
                 {% else %}
@@ -102,7 +102,7 @@
                 {% endif %}
               </button>
               {% if perms.photonest.favor_post %}
-              <button onclick="favorPost({{ post.id }})" id="favor-btn-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                 {% if post|has_favored:user %}
                   <i class="fa-solid fa-star text-warning"></i> 
                 {% else %}
@@ -114,7 +114,7 @@
           </div>
           <div class="w-full flex flex-row justify-center">
             {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
-            {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
+            {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
           </div>
         </div>
       </div>
@@ -123,7 +123,7 @@
     <button>close</button>
   </form>
 </dialog>
-<dialog id="deletePost_{{ post.id }}" class="modal">
+<dialog id="deletePost{{ pageprefix }}_{{ post.id }}" class="modal">
   <div class="modal-box">
     <h3 class="text-lg font-bold">Post löschen?</h3>
     <p class="py-4">Wollen Sie den Post wirklich löschen?</p>
@@ -142,7 +142,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-      initMediaPlayer({{ post.id }}, [
+      initMediaPlayer({{ post.id }}, '{{ pageprefix }}', [
           {% for media in post.media_files.all %}
           { 
               type: '{{ media.media_type }}', 
@@ -153,9 +153,9 @@
       ]);
   });
 
-  var videoNode_{{ post.id }} = document.getElementById('video-preview_{{ post.id }}');
-  if (videoNode_{{ post.id }} ) {
-    videoNode_{{ post.id }}.addEventListener('click', function(event){
+  var videoNode_{{ pageprefix }}_{{ post.id }} = document.getElementById('video-{{ pageprefix }}-preview_{{ post.id }}');
+  if (videoNode_{{ pageprefix }}_{{ post.id }} ) {
+    videoNode_{{ pageprefix }}_{{ post.id }}.addEventListener('click', function(event){
       event.preventDefault();
     });
   }
