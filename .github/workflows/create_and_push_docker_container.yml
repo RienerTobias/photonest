@@ -1,10 +1,12 @@
 name: Build and Push Docker Image
 
 on:
-  release:
+  push:
     branches:
-      - main  # Oder ein anderer Branch für Deployments
-  workflow_dispatch:  # Manuelles Triggern erlaubt
+      - main
+    tags:
+      - 'v*'  # Trigger on version tags
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -24,10 +26,21 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/rienertobias/photonest
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: .dockerfile
-          push: true
-          tags: ghcr.io/rienertobias/photonest:latest
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
