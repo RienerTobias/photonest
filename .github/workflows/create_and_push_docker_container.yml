@@ -28,6 +28,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/Dockerfile  # Pfad zum Dockerfile
+          file: .dockerfile
           push: true
           tags: ghcr.io/rienertobias/photonest:latest
