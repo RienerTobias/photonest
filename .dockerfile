@@ -17,8 +17,8 @@ COPY ./photonest_server .
 
 # Tailwind CSS builden
 RUN cd theme/static_src && \
-    npm install -D tailwindcss postcss autoprefixer && \
-    npx tailwindcss -i ./src/tailwind.css -o ../static/css/style.css --minify
+    npm install -D @tailwindcss/cli daisyui postcss autoprefixer && \
+    npx @tailwindcss/cli -i ./src/styles.css -o ../static/css/dist/styles.css --minify
 
 RUN mkdir -p /app/staticfiles && \
     chown -R root:root /app/staticfiles
