@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('gallery', views.gallery, name='gallery'),
     path('dashboard', views.dashboard, name='dashboard'),
+    path('profile', views.profile, name='profile'),
     path('posts/create/', views.create_post, name='create_post'),
     path('posts/<int:post_id>/like/', views.like_post, name='like_post'),
     path('posts/<int:post_id>/favor/', views.favor_post, name='favor_post'),
