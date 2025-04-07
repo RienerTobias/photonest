@@ -14,6 +14,7 @@ COPY ./photonest_server .
 RUN mkdir -p /app/staticfiles && \
     chown -R root:root /app/staticfiles
 
+ENV ALLOWED_HOSTS=*
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
