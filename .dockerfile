@@ -1,6 +1,16 @@
 # Basis-Image
 FROM python:3.12
 
+#Dependecies
+RUN apt-get update && \
+    apt-get install -y \
+        curl \
+        libldap2-dev \
+        libsasl2-dev \
+        gcc \
+        python3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install Node.js für Tailwind
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
