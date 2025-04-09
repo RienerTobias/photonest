@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os 
 from dotenv import load_dotenv
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType 
+#from django_auth_ldap.backend import LDAPBackend
+from django_auth_ldap.config import LDAPGroupQuery
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -182,3 +187,41 @@ INTERNAL_IPS = [
 
 # Login
 LOGIN_REDIRECT_URL = '/'
+
+#AD/LDAP
+AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST') 
+
+AUTH_LDAP_BIND_DN = os.getenv('LDAP_BIND_DN')
+AUTH_LDAP_BIND_PASSWORD = os.getenv('LDAP_BIND_PASSWORD')
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    os.getenv('LDAP_USER_SEARCH'), ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+)
+
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+    os.getenv('LDAP_GROUP_SEARCH'),
+    ldap.SCOPE_SUBTREE,
+    "(objectClass=groupOfNames)",
+)
+
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+    "is_superuser": os.getenv('LDAP_SUPERUSER_FLAGS'),
+}
+
+AUTH_LDAP_FIND_GROUP_PERMS = True
+
+AUTH_LDAP_USER_ATTR_MAP = {
+    "first_name": os.getenv('LDAP_USER_ATTR_FN'),
+    "last_name": os.getenv('LDAP_USER_ATTR_LN'),
+    "email": os.getenv('LDAP_USER_ATTR_EMAIL'),
+    "ldrole": os.getenv('LDAP_USER_ATTR_LDROLE'),
+
+}
+
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
+AUTHENTICATION_BACKENDS = [
+    "django_auth_ldap.backend.LDAPBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
