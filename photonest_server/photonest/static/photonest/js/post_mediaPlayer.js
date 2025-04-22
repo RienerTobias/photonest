@@ -1,7 +1,7 @@
 const mediaPlayers = {};
 
   function initMediaPlayer(postId, pageprefix, mediaFiles) {
-      mediaPlayers[postId] = {
+      mediaPlayers[postId + pageprefix] = {
           currentIndex: 0,
           mediaFiles: mediaFiles,
           imgElement: document.getElementById(`current-image-${pageprefix}-${postId}`),
@@ -17,7 +17,7 @@ const mediaPlayers = {};
   }
 
   function changeMedia(postId, pageprefix, direction) {
-      const player = mediaPlayers[postId];
+      const player = mediaPlayers[postId + pageprefix];
       if (!player) return;
 
       player.currentIndex = (player.currentIndex + direction + player.mediaFiles.length) % player.mediaFiles.length;
