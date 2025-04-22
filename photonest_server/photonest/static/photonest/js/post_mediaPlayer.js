@@ -9,8 +9,8 @@ const mediaPlayers = {};
       };
 
       if (Object.keys(mediaFiles).length <= 1){
-        document.getElementById(`btn-media-left-${pageprefix}-${postId}`).classList.add("invisible");
-        document.getElementById(`btn-media-right-${pageprefix}-${postId}`).classList.add("invisible");
+        document.getElementById(`btn-media-left-${pageprefix}-${postId}`).style.visibility = "hidden";
+        document.getElementById(`btn-media-right-${pageprefix}-${postId}`).style.visibility = "hidden";
       }
 
       document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
