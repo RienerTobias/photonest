@@ -189,6 +189,11 @@ INTERNAL_IPS = [
 LOGIN_REDIRECT_URL = '/'
 
 #AD/LDAP
+AUTH_LDAP_GLOBAL_OPTIONS = {
+    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER,  # Zertifikate ignorieren
+    ldap.OPT_DEBUG_LEVEL: 255  # Ausführliches LDAP-Logging
+}
+
 AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST') 
 
 AUTH_LDAP_BIND_DN = os.getenv('LDAP_BIND_DN')
