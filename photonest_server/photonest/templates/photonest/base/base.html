@@ -10,6 +10,21 @@
     <div class="w-full h-18 flex flex-col items-center p-2 fixed bottom-0 bg-base-100 z-50">
         {% include 'photonest/base/dock.html' %}
     </div>
+
+    <dialog id="fullscreen_img" class="modal !bg-black/75">
+        <div class="modal-box bg-transparent w-full h-full max-w-screen max-w-screen">
+          <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-lg text-white"><i class="fa-solid fa-xmark"></i></button>
+          </form>
+          <form method="dialog" class="w-full h-full bg-transparent">
+            <button class="w-full h-full"><img class="w-full h-full bg-transparent object-contain"/></button>
+          </form>
+        </div>
+    </dialog>
+
+    <script>
+        const can_download = {% if perms.photonest.favor_post or request.user.is_superuser %}true{% else %}false{% endif %}
+    </script>
 </body>
 
 {% endblock %}
