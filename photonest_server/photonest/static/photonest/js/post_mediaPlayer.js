@@ -13,7 +13,19 @@ const mediaPlayers = {};
         document.getElementById(`btn-media-right-${pageprefix}-${postId}`).style.visibility = "hidden";
       }
 
-      document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
+
+    const carouselContainer = document.getElementById(`carousel-container-${pageprefix}-${postId}`);
+    if (carouselContainer) {
+        carouselContainer.querySelectorAll('.carousel-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const media = this.querySelector('img');
+                if (media.src.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                    ShowFullscreenImg(media.src);
+                }
+            });
+        });
+    }
   }
 
   function changeMedia(postId, pageprefix, direction) {
@@ -39,5 +51,11 @@ const mediaPlayers = {};
 
           player.imgElement.style.display = 'none';
       }
-      document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
   }
+
+function ShowFullscreenImg(path){
+    const fullscreenimg = document.getElementById('fullscreen_img');
+    fullscreenimg.querySelector('img').src = path;
+    fullscreenimg.showModal();
+}
