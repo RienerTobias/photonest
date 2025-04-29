@@ -230,3 +230,8 @@ AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+#PhotoNest Config
+BRONZE_MEDAL_LIMIT = 1
+SILVER_MEDAL_LIMIT = 3
+GOLD_MEDAL_LIMIT = 5
