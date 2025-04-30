@@ -85,9 +85,6 @@ def profile(request):
     user = request.user
 
     return render(request, 'photonest/sites/profile.html', {
-        'post_count': user.posts.count(),
-        'like_count': user.posts.aggregate(total_likes=Count('likes'))['total_likes'],
-        'used_count': user.posts.filter(is_used=True).count(),
         'timestamp': now().timestamp(),
     })
 
