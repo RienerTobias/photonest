@@ -45,14 +45,38 @@ def gallery(request):
     })
 
 @login_required
-def dashboard(request):    
+def dashboard(request): 
+    sort_field_user = request.GET.get('sort_user', '-likes_received')
+    valid_fields_user = ['username', 'uploads_count', 'likes_received', 'uses_count']
+    
+    if sort_field_user.lstrip('-') not in valid_fields_user:
+        sort_field_user = '-likes_received'
+
+    users = User.objects.annotate(
+        uploads_count=Count('posts'),
+        likes_received=Count('posts__likes'),
+        uses_count=Count('posts', filter=Q(posts__is_used=True))).order_by(sort_field_user)
+    
+    sort_field_class = request.GET.get('sort_class', '-total_likes')
+    valid_fields_class = ['class_name', 'total_uploads', 'total_likes', 'total_uses']
+    
+    # Sicherheitscheck für Sortierparameter
+    if sort_field_class.lstrip('-') not in valid_fields_class:
+        sort_field_class = '-total_likes'
+
+    classes = SchoolClass.objects.annotate(
+        total_uploads=Count('posts', distinct=True),
+        total_likes=Count('posts__likes', distinct=True),
+        total_uses=Count('posts', filter=Q(posts__is_used=True), distinct=True)
+    ).order_by(sort_field_class)
+    
+    
+
     return render(request, 'photonest/sites/dashboard.html', {
-        'top_uploads_users': User.objects.annotate(upload_count=Count('posts')).order_by('-upload_count')[:3],
-        'top_uploads_class': SchoolClass.objects.annotate(upload_count=Count('posts')).order_by('-upload_count')[:3],
-        'top_likes_users': User.objects.annotate(total_likes=Count('posts__likes')).order_by('-total_likes')[:3],
-        'top_likes_class': SchoolClass.objects.annotate(total_likes=Count('posts__likes')).order_by('-total_likes')[:3],
-        'top_used_users': User.objects.annotate(total_uses=Count('posts', filter=Q(posts__is_used=True))).order_by('-total_uses')[:3],
-        'top_used_class': SchoolClass.objects.annotate(total_uses=Count('posts', filter=Q(posts__is_used=True))).order_by('-total_uses')[:3],
+        'users': users,
+        'classes': classes,
+        'current_sort_user': sort_field_user,
+        'current_sort_class': sort_field_class,
         'timestamp': now().timestamp(),
     })
 
@@ -61,9 +85,6 @@ def profile(request):
     user = request.user
 
     return render(request, 'photonest/sites/profile.html', {
-        'post_count': user.posts.count(),
-        'like_count': user.posts.aggregate(total_likes=Count('likes'))['total_likes'],
-        'used_count': user.posts.filter(is_used=True).count(),
         'timestamp': now().timestamp(),
     })
 
