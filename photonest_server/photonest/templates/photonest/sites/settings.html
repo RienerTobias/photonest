@@ -1,0 +1,32 @@
+{% extends 'photonest/base/base.html' %}
+
+{% block title %}Einstellungen | Photonest{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+
+<main class="w-full h-full flex flex-col items-center pb-12">
+    <h1 class="text-4xl font-bold m-6">EINSTELLUNGEN</h1>
+
+    <div class="flex flex-row fixed top-4 left-4 text-2xl">
+        <a href="{% url 'profile' %}" class="bt btn-ghost m-1 max-md:fixed max-md:left-4"><i class="fa-solid fa-arrow-left"></i></a>
+    </div>
+
+    <div class="w-full h-full flex flex-col justify-between items-center">
+      <div class="w-full flex flex-col justify-center items-center">
+        <fieldset class="fieldset w-full max-w-96">
+          <legend class="fieldset-legend text-lg">Theme</legend>
+          <select id="theme-select" class="select w-full">
+            <option value="system">Systemstandard</option>
+            <option value="light">Hell</option>
+            <option value="dark">Dunkel</option>
+          </select>
+        </fieldset>
+      </div>
+      <footer>
+        <p>&copy; Elia Dieminger, Tobias Riener, Tobias Schippany - HTBLuVA Waidhofen an der Ybbs</p>
+      </footer>
+    </div>
+</main>
+{% endblock %}
