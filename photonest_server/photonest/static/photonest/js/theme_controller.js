@@ -1,46 +1,21 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const themeSelect = document.getElementById('theme-select');
-  const html = document.documentElement;
-
-  const themes = {
-    light: 'light',
-    dark: 'dark',
-    system: 'Systemstandard'
-  };
-
-  function getSystemTheme() {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-
-  function applyTheme(theme) {
-    let themeToApply = theme;
-    
-    if (theme === 'system') {
-      themeToApply = getSystemTheme();
-      localStorage.removeItem('theme'); 
-    } else {
-      localStorage.setItem('theme', theme);
+// Globale Theme-Steuerung für alle Seiten
+document.addEventListener('DOMContentLoaded', function() {
+    // Cookie-Funktionen
+    function getCookie(name) {
+        const cookieName = name + "=";
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookies = decodedCookie.split(';');
+        
+        for(let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.indexOf(cookieName) === 0) {
+                return cookie.substring(cookieName.length, cookie.length);
+            }
+        }
+        return null;
     }
 
-    html.setAttribute('data-theme', themeToApply);
-    themeSelect.value = theme;
-  }
-
-  function loadTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'system';
-  }
-
-  const initialTheme = loadTheme();
-  applyTheme(initialTheme);
-
-  themeSelect.addEventListener('change', (e) => {
-    applyTheme(e.target.value);
-  });
-
-  window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
-    if (localStorage.getItem('theme') === null) {
-      applyTheme('system');
-    }
-  });
+    // Theme setzen
+    const savedTheme = getCookie('theme') || 'light'; // Fallback auf light
+    document.documentElement.setAttribute('data-theme', savedTheme);
 });

@@ -15,18 +15,98 @@
 
     <div class="w-full h-full flex flex-col justify-between items-center">
       <div class="w-full flex flex-col justify-center items-center p-4">
-        <fieldset class="fieldset w-full max-w-96">
+        <fieldset class="fieldset">
           <legend class="fieldset-legend text-lg">Theme</legend>
-          <select id="theme-select" class="select w-full">
-            <option value="system">Systemstandard</option>
-            <option value="light">Hell</option>
-            <option value="dark">Dunkel</option>
-          </select>
+          <label class="flex gap-2 cursor-pointer items-center">
+            <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="system"/>
+
+            Systemstandard
+          </label>
+          <label class="flex gap-2 cursor-pointer items-center">
+            <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="light"/>
+            Light
+          </label>
+          <label class="flex gap-2 cursor-pointer items-center">
+            <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="dark"/>
+            Dark
+          </label>
         </fieldset>
       </div>
       <footer class="w-full h-fit p-4 flex flex-col items-center justify-center text-center">
         <p>&copy; Elia Dieminger, Tobias Riener, Tobias Schippany - HTBLuVA Waidhofen an der Ybbs</p>
       </footer>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          // Cookie-Funktionen
+          function setCookie(name, value, days) {
+              const date = new Date();
+              date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+              const expires = "expires=" + date.toUTCString();
+              document.cookie = name + "=" + value + ";" + expires + ";path=/;SameSite=Lax";
+          }
+      
+          function getCookie(name) {
+              const cookieName = name + "=";
+              const decodedCookie = decodeURIComponent(document.cookie);
+              const cookies = decodedCookie.split(';');
+              
+              for(let i = 0; i < cookies.length; i++) {
+                  let cookie = cookies[i].trim();
+                  if (cookie.indexOf(cookieName) === 0) {
+                      return cookie.substring(cookieName.length, cookie.length);
+                  }
+              }
+              return null;
+          }
+      
+          function deleteCookie(name) {
+              document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          }
+      
+          // Theme-Logik
+          const themeRadios = document.querySelectorAll('input[name="theme-radios"]');
+          const savedTheme = getCookie('theme');
+          
+          // Initialen Zustand setzen
+          if(savedTheme) {
+              themeRadios.forEach(radio => {
+                  radio.checked = (radio.value === savedTheme);
+              });
+              document.documentElement.setAttribute('data-theme', savedTheme);
+          } else {
+              // Systemstandard auswählen
+              document.querySelector('input[value="system"]').checked = true;
+              // Theme auf Systemeinstellung setzen
+              const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+              document.documentElement.setAttribute('data-theme', systemTheme);
+          }
+      
+          // Änderungen überwachen
+          themeRadios.forEach(radio => {
+              radio.addEventListener('change', function() {
+                  if(this.checked) {
+                      if(this.value === 'system') {
+                          deleteCookie('theme');
+                          // Auf Systemtheme aktualisieren
+                          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                          document.documentElement.setAttribute('data-theme', systemTheme);
+                      } else {
+                          setCookie('theme', this.value, 365);
+                          document.documentElement.setAttribute('data-theme', this.value);
+                      }
+                  }
+              });
+          });
+      
+          // Systemtheme-Änderungen live verfolgen
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+              if(!getCookie('theme')) {
+                  const newTheme = e.matches ? 'dark' : 'light';
+                  document.documentElement.setAttribute('data-theme', newTheme);
+              }
+          });
+      });
+    </script>
 </main>
 {% endblock %}
