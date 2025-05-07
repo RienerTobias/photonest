@@ -82,9 +82,13 @@ def dashboard(request):
 
 @login_required
 def profile(request):    
-    user = request.user
-
     return render(request, 'photonest/sites/profile.html', {
+        'timestamp': now().timestamp(),
+    })
+
+@login_required
+def settings(request):    
+    return render(request, 'photonest/sites/settings.html', {
         'timestamp': now().timestamp(),
     })
 
