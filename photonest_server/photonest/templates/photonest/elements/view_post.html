@@ -60,7 +60,7 @@
     <div class="w-full h-full flex flex-col items-center justify">
       <div class="w-full h-fit flex flex-row items-center justify-center">
         <button class="btn btn-ghost text-xl mr-2 md:m-4" onclick="changeMedia({{ post.id }}, '{{ pageprefix }}', -1)" id="btn-media-left-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-left"></i></button>
-        <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container">
+        <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container-{{ pageprefix }}-{{ post.id }}">
           {% with media=post.media_files.first %}
           <div class="carousel-item w-full">
             {% if media %}

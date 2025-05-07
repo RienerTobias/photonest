@@ -1,7 +1,7 @@
 const mediaPlayers = {};
 
   function initMediaPlayer(postId, pageprefix, mediaFiles) {
-      mediaPlayers[postId] = {
+      mediaPlayers[postId + pageprefix] = {
           currentIndex: 0,
           mediaFiles: mediaFiles,
           imgElement: document.getElementById(`current-image-${pageprefix}-${postId}`),
@@ -9,15 +9,27 @@ const mediaPlayers = {};
       };
 
       if (Object.keys(mediaFiles).length <= 1){
-        document.getElementById(`btn-media-left-${pageprefix}-${postId}`).classList.add("invisible");
-        document.getElementById(`btn-media-right-${pageprefix}-${postId}`).classList.add("invisible");
+        document.getElementById(`btn-media-left-${pageprefix}-${postId}`).style.visibility = "hidden";
+        document.getElementById(`btn-media-right-${pageprefix}-${postId}`).style.visibility = "hidden";
       }
 
-      document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
+
+    const carouselContainer = document.getElementById(`carousel-container-${pageprefix}-${postId}`);
+    if (carouselContainer) {
+        carouselContainer.querySelectorAll('.carousel-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const media = this.querySelector('img');
+                if (media.src.match(/\.(jpeg|jpg|gif|png)$/) != null) {
+                    ShowFullscreenImg(media.src);
+                }
+            });
+        });
+    }
   }
 
   function changeMedia(postId, pageprefix, direction) {
-      const player = mediaPlayers[postId];
+      const player = mediaPlayers[postId + pageprefix];
       if (!player) return;
 
       player.currentIndex = (player.currentIndex + direction + player.mediaFiles.length) % player.mediaFiles.length;
@@ -39,5 +51,11 @@ const mediaPlayers = {};
 
           player.imgElement.style.display = 'none';
       }
-      document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
   }
+
+function ShowFullscreenImg(path){
+    const fullscreenimg = document.getElementById('fullscreen_img');
+    fullscreenimg.querySelector('img').src = path;
+    fullscreenimg.showModal();
+}

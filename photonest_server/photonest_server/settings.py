@@ -189,6 +189,11 @@ INTERNAL_IPS = [
 LOGIN_REDIRECT_URL = '/'
 
 #AD/LDAP
+AUTH_LDAP_GLOBAL_OPTIONS = {
+    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_NEVER,  # Zertifikate ignorieren
+    ldap.OPT_DEBUG_LEVEL: 255  # Ausführliches LDAP-Logging
+}
+
 AUTH_LDAP_SERVER_URI = os.getenv('LDAP_HOST') 
 
 AUTH_LDAP_BIND_DN = os.getenv('LDAP_BIND_DN')
@@ -225,3 +230,8 @@ AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+#PhotoNest Config
+BRONZE_MEDAL_LIMIT = 1
+SILVER_MEDAL_LIMIT = 3
+GOLD_MEDAL_LIMIT = 5
