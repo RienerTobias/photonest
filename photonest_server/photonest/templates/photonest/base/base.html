@@ -11,6 +11,15 @@
         {% include 'photonest/base/dock.html' %}
     </div>
 
+    <div id="alert-container" class="w-full max-w-[32rem] h-fit fixed right-0 top-0 p-2 z-[99999]">
+      {% if reported_post_count != 0 %}
+      <div role="alert" class="alert alert-warning">
+        <i class="fa-regular fa-flag text-lg"></i>
+        <span>Achtung: Gemeldete Beiträge! <a href="/gallery?only_reported=on" class="link">Jetzt ansehen!</a></span>
+      </div>
+      {% endif %}
+    </div>
+
     <dialog id="fullscreen_img" class="modal !bg-black/75">
         <div class="modal-box bg-transparent w-full h-full max-w-screen max-w-screen">
           <form method="dialog">

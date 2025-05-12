@@ -17,7 +17,8 @@ from io import BytesIO
 
 # Create your views here.
 @login_required
-def home(request):    
+def home(request):  
+    
     return render(request, 'photonest/sites/home.html', {
         'newest_posts': Post.objects.all().order_by('-uploaded_at')[:3],
         'top_posts': Post.objects.all().annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
@@ -26,6 +27,7 @@ def home(request):
         'timestamp': now().timestamp(),
         'max_files': 15,
         'pageprefix': 'home',
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -41,7 +43,8 @@ def gallery(request):
         'create_post_url': 'gallery',
         'timestamp': now().timestamp(),
         'max_files': 15,
-        'pageprefix': 'gallery'
+        'pageprefix': 'gallery',
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -78,6 +81,7 @@ def dashboard(request):
         'current_sort_user': sort_field_user,
         'current_sort_class': sort_field_class,
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
