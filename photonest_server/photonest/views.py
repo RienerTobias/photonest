@@ -171,6 +171,29 @@ def delete_post(request, post_id):
     return redirect(request.POST.get('next', 'home'))
 
 @login_required
+def report_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if(post.is_reported == True):
+        return redirect(request.POST.get('next', 'home'))
+
+    post.report(user=request.user)
+
+    return redirect(request.POST.get('next', 'home'))
+
+@login_required
+@permission_required('photonest.favor_post')
+def release_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if(post.is_reported == False):
+        return redirect(request.POST.get('next', 'home'))
+
+    post.release()
+    
+    return redirect(request.POST.get('next', 'home'))
+
+@login_required
 def download_all_post_media(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     media_files = post.media_files.all()

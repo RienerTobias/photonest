@@ -43,6 +43,9 @@ class Post(models.Model):
     is_used = models.BooleanField(default=False)
     used_in = models.CharField(max_length=100, blank=True, null=True)
     used_at = models.DateTimeField(blank=True, null=True)
+    is_reported = models.BooleanField(default=False)
+    reported_from = models.ManyToManyField(User, related_name='reported_posts', blank=True)
+    reported_at = models.DateTimeField(blank=True, null=True)
     
     @property
     def like_count(self): return self.likes.count()
@@ -57,6 +60,18 @@ class Post(models.Model):
         if used_in:
             self.used_in = used_in
         self.save()
+    
+    def report(self, user):
+        self.is_reported = True
+        self.reported_at = timezone.now()
+        self.reported_from.add(user)
+        self.save()
+    
+    def release(self):
+        self.is_reported = False
+        self.reported_from.clear()
+        self.save()
+
 
     def delete(self, *args, **kwargs):
         for media in self.media_files.all():
