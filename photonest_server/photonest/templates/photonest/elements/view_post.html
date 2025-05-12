@@ -79,7 +79,7 @@
         </div>
         <button class="btn btn-ghost text-xl ml-2 md:m-4" onclick="changeMedia({{ post.id }}, '{{ pageprefix }}', 1)" id="btn-media-right-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
       </div>
-      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-2" id="media-download-{{ pageprefix }}_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn not-dark:btn-soft btn-primary m-2" id="media-download-{{ pageprefix }}_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
     </div>
     <div class="p-4 w-full h-fit">
         <h2 class="card-title">
@@ -112,8 +112,10 @@
               {% endif %}
             </div>
           </div>
-          <div class="w-full flex flex-row justify-center">
+          <div class="w-full flex flex-wrap flex-row justify-center">
             {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-primary m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
+            {% if post.is_reported == False %}<button class="btn btn-soft btn-warning m-1" onclick="reportPost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i>&ensp;Post melden</button>{% endif %}
+            {% if post.is_reported == True %}<button class="btn btn-soft btn-success m-1" onclick="releasePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i>&ensp;Post freigeben</button>{% endif %}
             {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
           </div>
         </div>
@@ -135,6 +137,40 @@
         {% csrf_token %}
         <input type="hidden" name="next" value="gallery">
         <button type="submit" class="btn btn-error btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Löschen</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="reportPost{{ pageprefix }}_{{ post.id }}" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Post melden?</h3>
+    <p class="py-4">Wollen Sie den Post wirklich melden?</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
+      </form>
+      <form method="post" action="/posts/{{ post.id }}/report/">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="gallery">
+        <button type="submit" class="btn btn-warning btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Melden</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="releasePost{{ pageprefix }}_{{ post.id }}" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Post freigeben?</h3>
+    <p class="py-4">Wollen Sie den Post wirklich wieder freigeben?</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
+      </form>
+      <form method="post" action="/posts/{{ post.id }}/release/">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="gallery">
+        <button type="submit" class="btn btn-success btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Freigeben</button>
       </form>
     </div>
   </div>

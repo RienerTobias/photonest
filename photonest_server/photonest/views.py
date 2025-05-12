@@ -17,15 +17,17 @@ from io import BytesIO
 
 # Create your views here.
 @login_required
-def home(request):    
+def home(request):  
+    
     return render(request, 'photonest/sites/home.html', {
-        'newest_posts': Post.objects.all().order_by('-uploaded_at')[:3],
-        'top_posts': Post.objects.all().annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
+        'newest_posts': Post.objects.filter(is_reported=False).order_by('-uploaded_at')[:3],
+        'top_posts': Post.objects.filter(is_reported=False).annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
         'form': PostForm(),
         'create_post_url': 'home',
         'timestamp': now().timestamp(),
         'max_files': 15,
         'pageprefix': 'home',
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -41,7 +43,8 @@ def gallery(request):
         'create_post_url': 'gallery',
         'timestamp': now().timestamp(),
         'max_files': 15,
-        'pageprefix': 'gallery'
+        'pageprefix': 'gallery',
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -78,6 +81,7 @@ def dashboard(request):
         'current_sort_user': sort_field_user,
         'current_sort_class': sort_field_class,
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -169,6 +173,33 @@ def delete_post(request, post_id):
         post.delete()
     
     return redirect(request.POST.get('next', 'home'))
+
+@login_required
+def report_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if(post.is_reported == True):
+        return redirect(request.POST.get('next', 'home'))
+
+    post.report(user=request.user)
+
+    return redirect(request.POST.get('next', 'home'))
+
+@login_required
+@permission_required('photonest.favor_post')
+def release_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if(post.is_reported == False):
+        return redirect('/gallery?only_reported=on')
+
+    post.release()
+
+    if(Post.objects.filter(is_reported=True).count() > 0): 
+        return redirect('/gallery?only_reported=on')
+    else:
+        return redirect('/gallery')
+
 
 @login_required
 def download_all_post_media(request, post_id):
