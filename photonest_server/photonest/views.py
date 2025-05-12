@@ -20,8 +20,8 @@ from io import BytesIO
 def home(request):  
     
     return render(request, 'photonest/sites/home.html', {
-        'newest_posts': Post.objects.all().order_by('-uploaded_at')[:3],
-        'top_posts': Post.objects.all().annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
+        'newest_posts': Post.objects.filter(is_reported=False).order_by('-uploaded_at')[:3],
+        'top_posts': Post.objects.filter(is_reported=False).annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
         'form': PostForm(),
         'create_post_url': 'home',
         'timestamp': now().timestamp(),
@@ -191,11 +191,15 @@ def release_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
     if(post.is_reported == False):
-        return redirect(request.POST.get('next', 'home'))
+        return redirect('/gallery?only_reported=on')
 
     post.release()
-    
-    return redirect(request.POST.get('next', 'home'))
+
+    if(Post.objects.filter(is_reported=True).count() > 0): 
+        return redirect('/gallery?only_reported=on')
+    else:
+        return redirect('/gallery')
+
 
 @login_required
 def download_all_post_media(request, post_id):
