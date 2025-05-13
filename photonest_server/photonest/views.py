@@ -28,6 +28,10 @@ def home(request):
         'max_files': 15,
         'pageprefix': 'home',
         'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required
@@ -45,6 +49,10 @@ def gallery(request):
         'max_files': 15,
         'pageprefix': 'gallery',
         'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required
@@ -118,7 +126,15 @@ def create_post(request):
                 media_type='photo' if content_type.startswith('image/') else 'video'
             )
             post.media_files.add(media) 
-        
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Post wurde erstellt!"
+        request.session['alert_icon'] = "check"
+        request.session['alert_type'] = "success"
+    else:
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Hochladen Fehlgeschlagen"
+        request.session['alert_icon'] = "xmark"
+        request.session['alert_type'] = "error"
     return redirect(request.POST.get('next', 'home'))
 
 @login_required
@@ -171,7 +187,17 @@ def delete_post(request, post_id):
     
     if request.user == post.user or request.user.is_superuser or request.user.has_perm('favor_post'):
         post.delete()
-    
+
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Post wurde gelöscht!"
+        request.session['alert_icon'] = "trash"
+        request.session['alert_type'] = "error"
+    else:
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Löschen Fehlgeschlagen!"
+        request.session['alert_icon'] = "xmark"
+        request.session['alert_type'] = "error"
+
     return redirect(request.POST.get('next', 'home'))
 
 @login_required
@@ -179,10 +205,18 @@ def report_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
 
     if(post.is_reported == True):
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Melden Fehlgeschlagen!"
+        request.session['alert_icon'] = "xmark"
+        request.session['alert_type'] = "error"
         return redirect(request.POST.get('next', 'home'))
 
     post.report(user=request.user)
 
+    request.session['show_alert'] = True
+    request.session['alert_message'] = "Post wurde gemeldet!"
+    request.session['alert_icon'] = "flag"
+    request.session['alert_type'] = "warning"
     return redirect(request.POST.get('next', 'home'))
 
 @login_required
@@ -194,6 +228,11 @@ def release_post(request, post_id):
         return redirect('/gallery?only_reported=on')
 
     post.release()
+
+    request.session['show_alert'] = True
+    request.session['alert_message'] = "Post wurde wieder freigegeben!"
+    request.session['alert_icon'] = "check"
+    request.session['alert_type'] = "success"
 
     if(Post.objects.filter(is_reported=True).count() > 0): 
         return redirect('/gallery?only_reported=on')

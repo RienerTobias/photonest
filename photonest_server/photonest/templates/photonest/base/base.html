@@ -13,7 +13,7 @@
 
     <div id="alert-container" class="w-full max-w-[32rem] h-fit fixed right-0 top-0 p-2 z-[99999]">
       {% if perms.photonest.favor_post or request.user.is_superuser %}
-        <div role="alert" class="alert alert-warning {% if reported_post_count == 0 %}hidden{% endif %}" id="report-alert">
+        <div role="alert" class="alert alert-warning {% if reported_post_count == 0 %}hidden{% endif %} m-1" id="report-alert">
           <i class="fa-regular fa-flag text-lg"></i>
           <span>Achtung: Gemeldete Beiträge! <a href="/gallery?only_reported=on" class="link">Jetzt ansehen!</a></span>
           <button onclick="hideAlert(this)" class="cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
@@ -35,6 +35,7 @@
     <script src="{% static 'photonest/js/alert.js' %}?v={{ timestamp }}"></script>
     <script>
         const can_download = {% if perms.photonest.favor_post or request.user.is_superuser %}true{% else %}false{% endif %}
+        {% if show_alert == True %}AddTimedAlert("{{ alert_type }}", "{{ alert_message }}", "{{ alert_icon }}");{% endif %}
     </script>
 </body>
 
