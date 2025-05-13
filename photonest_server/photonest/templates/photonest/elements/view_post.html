@@ -86,7 +86,7 @@
           <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
           {% if post.is_used %}<div class="badge">Verwendet am {{ post.used_at|date:"SHORT_DATE_FORMAT" }}</div>{% endif %}
         </h2>
-        <p class="m-2 text-base text-wrap w-full break-all">{{ post.description }}</p>
+        <p class="m-2 text-base text-wrap w-full ">{{ post.description }}</p>
         <div class="card-actions items-center text-base flex flex-col">
           <div class="flex flex-row justify-between w-full">
             <div class="flex flex-col text-base-300 dark:text-base-content">
