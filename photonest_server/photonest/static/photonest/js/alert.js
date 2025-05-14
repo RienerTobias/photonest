@@ -21,11 +21,15 @@ if (hideUntil && Date.now() < parseInt(hideUntil)) {
 
 function AddTimedAlert(type, message, icon="triangle-exclamation"){
     const alert = document.createElement("div");
-    alert.innerHTML = `<div role="alert" class="alert alert-${type} m-1"><i class="fa-regular fa-${icon} text-lg"></i><span>${message}</span></div>`;
+    alert.innerHTML = `<div role="alert" class="alert alert-${type} m-1"><i class="fa-regular fa-${icon} text-lg"></i><span>${message}</span><button onclick="RemoveTimedAlert(this)" class="cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button></div>`;
 
     document.getElementById("alert-container").appendChild(alert); 
 
     setTimeout(() => {
         alert.remove();
     }, ALERT_DURATION);
+}
+
+function RemoveTimedAlert(button){
+    button.closest('.alert').remove();
 }
