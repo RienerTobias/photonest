@@ -43,6 +43,7 @@ class Post(models.Model):
     is_used = models.BooleanField(default=False)
     used_in = models.CharField(max_length=100, blank=True, null=True)
     used_at = models.DateTimeField(blank=True, null=True)
+    used_from = models.ManyToManyField(User, related_name='used_posts', blank=True)
     is_reported = models.BooleanField(default=False)
     reported_from = models.ManyToManyField(User, related_name='reported_posts', blank=True)
     reported_at = models.DateTimeField(blank=True, null=True)
@@ -54,9 +55,10 @@ class Post(models.Model):
     @property
     def is_favorite(self, user): return self.favorites.filter(id=user.id).exists()
     
-    def mark_as_used(self, used_in=None):
+    def mark_as_used(self, used_from, used_in=None):
         self.is_used = True
         self.used_at = timezone.now()
+        self.used_from.add(used_from)
         if used_in:
             self.used_in = used_in
         self.save()

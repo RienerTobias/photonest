@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.utils.timezone import now
+from django.utils import timezone
+from datetime import datetime
 from django.db.models import Count, Q
 from .forms import PostForm
 from .models import Post, Media, SchoolClass
@@ -75,10 +77,32 @@ def dashboard(request):
     if sort_field_class.lstrip('-') not in valid_fields_class:
         sort_field_class = '-total_likes'
 
+    current_date = now()
+    if current_date.month >= 9:
+        schuljahr_start = datetime(current_date.year, 9, 1)
+        schuljahr_ende = datetime(current_date.year + 1, 8, 31)
+    else:
+        schuljahr_start = datetime(current_date.year - 1, 9, 1)
+        schuljahr_ende = datetime(current_date.year, 8, 31)
+    schuljahr_start = timezone.make_aware(schuljahr_start)
+    schuljahr_ende = timezone.make_aware(schuljahr_ende)
+
     classes = SchoolClass.objects.annotate(
-        total_uploads=Count('posts', distinct=True),
-        total_likes=Count('posts__likes', distinct=True),
-        total_uses=Count('posts', filter=Q(posts__is_used=True), distinct=True)
+        total_uploads=Count(
+            'posts',
+            filter=Q(posts__uploaded_at__range=(schuljahr_start, schuljahr_ende)),
+            distinct=True
+        ),
+        total_likes=Count(
+            'posts__likes',
+            filter=Q(posts__uploaded_at__range=(schuljahr_start, schuljahr_ende)),
+            distinct=True
+        ),
+        total_uses=Count(
+            'posts',
+            filter=Q(posts__is_used=True) & Q(posts__uploaded_at__range=(schuljahr_start, schuljahr_ende)),
+            distinct=True
+        )
     ).order_by(sort_field_class)
     
     
@@ -254,7 +278,7 @@ def download_all_post_media(request, post_id):
     zip_buffer.seek(0)
     response = HttpResponse(zip_buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="post_{post_id}_media.zip"'
-    post.mark_as_used()
+    post.mark_as_used(used_in="download", used_from=request.user)
     return response
 
 @login_required
@@ -264,5 +288,5 @@ def download_single_media(request, media_id):
 
     related_posts = media.posts.all()
     for post in related_posts:
-        post.mark_as_used()
+        post.mark_as_used(used_in="download", used_from=request.user)
     return FileResponse(open(file_path, 'rb'), as_attachment=True)
