@@ -13,6 +13,7 @@
 
     <div id="alert-container" class="w-full max-w-[32rem] h-fit fixed right-0 top-0 p-2 z-[99999]">
       {% if perms.photonest.favor_post or request.user.is_superuser %}
+        <div class="alert-success alert-warning alert-error hidden"></div>
         <div role="alert" class="alert alert-warning {% if reported_post_count == 0 %}hidden{% endif %} m-1" id="report-alert">
           <i class="fa-regular fa-flag text-lg"></i>
           <span>Achtung: Gemeldete Beiträge! <a href="/gallery?only_reported=on" class="link">Jetzt ansehen!</a></span>

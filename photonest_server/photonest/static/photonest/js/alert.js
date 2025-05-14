@@ -20,8 +20,6 @@ if (hideUntil && Date.now() < parseInt(hideUntil)) {
 }
 
 function AddTimedAlert(type, message, icon="triangle-exclamation"){
-    const TYPES = "alert-success alert-warning alert-error";
-
     const alert = document.createElement("div");
     alert.innerHTML = `<div role="alert" class="alert alert-${type} m-1"><i class="fa-regular fa-${icon} text-lg"></i><span>${message}</span></div>`;
 
