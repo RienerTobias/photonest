@@ -263,6 +263,18 @@ def release_post(request, post_id):
     else:
         return redirect('/gallery')
 
+@login_required
+@permission_required('photonest.favor_post')
+def duplicate_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.duplicate()
+
+    request.session['show_alert'] = True
+    request.session['alert_message'] = "Post wurde dupliziert!"
+    request.session['alert_icon'] = "check"
+    request.session['alert_type'] = "success"
+
+    return redirect('/gallery')
 
 @login_required
 def download_all_post_media(request, post_id):

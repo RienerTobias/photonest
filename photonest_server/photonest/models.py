@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from colorfield.fields import ColorField
 from django.core.validators import MaxValueValidator
+from photonest.utils import duplicate_instance
 
 class SchoolClass(models.Model):
     class_name = models.CharField(max_length=10, unique=True, verbose_name="Klassenname")
@@ -74,6 +75,17 @@ class Post(models.Model):
         self.reported_from.clear()
         self.save()
 
+    def duplicate(self):
+        new_post = duplicate_instance(self, exclude_fields=[
+            'media_files', 'likes', 'favorites', 'used_from', 'reported_from'
+        ])
+
+        for media in self.media_files.all():
+            new_media = duplicate_instance(media)
+            new_post.media_files.add(new_media)
+
+        new_post.save()
+        return new_post
 
     def delete(self, *args, **kwargs):
         for media in self.media_files.all():
