@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Docu | Photonest{% endblock %}
 
 {% block base_content %}
@@ -14,7 +14,19 @@
                 </i>
             </a>
         </div>
+
+        <div class="space-y-4 md:space-y-6">
+            {% include 'docu/sites/navbar.html' %}
+            
+
+            <div id="content-uebersicht" class="content">{% include 'docu/sites/overview.html' %}</div>
+            <div id="content-home" class="content" style="display: none;">{% include 'docu/sites/home.html' %}</div>
+            <div id="content-gallerie" class="content" style="display: none;">{% include 'docu/sites/gallery.html' %}</div>
+            <div id="content-dashboard" class="content" style="display: none;">{% include 'docu/sites/dashboard.html' %}</div>
+            <div id="content-profil" class="content" style="display: none;">{% include 'docu/sites/profil.html' %}</div>
+        </div>
     </main>
+    <script src="{% static 'docu/js/navbar.js' %}"></script>
 </body>
 
 {% endblock %}
