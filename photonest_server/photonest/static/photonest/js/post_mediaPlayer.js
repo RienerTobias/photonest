@@ -14,6 +14,7 @@ const mediaPlayers = {};
       }
 
       if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${mediaFiles[0].id}/download/`);
+      document.getElementById(`reportPost${pageprefix}_${postId}_media_number`).value = 1;
 
     const carouselContainer = document.getElementById(`carousel-container-${pageprefix}-${postId}`);
     if (carouselContainer) {
@@ -52,6 +53,7 @@ const mediaPlayers = {};
           player.imgElement.style.display = 'none';
       }
       if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
+      document.getElementById(`reportPost${pageprefix}_${postId}_media_number`).value = player.currentIndex+1;
   }
 
 function ShowFullscreenImg(path){

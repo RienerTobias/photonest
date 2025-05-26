@@ -48,6 +48,7 @@ class Post(models.Model):
     is_reported = models.BooleanField(default=False)
     reported_from = models.ManyToManyField(User, related_name='reported_posts', blank=True)
     reported_at = models.DateTimeField(blank=True, null=True)
+    reported_for = models.CharField(max_length=255, blank=True, null=True)
     
     @property
     def like_count(self): return self.likes.count()
@@ -64,10 +65,11 @@ class Post(models.Model):
             self.used_in = used_in
         self.save()
     
-    def report(self, user):
+    def report(self, user, reported_for):
         self.is_reported = True
         self.reported_at = timezone.now()
         self.reported_from.add(user)
+        self.reported_for = reported_for
         self.save()
     
     def release(self):

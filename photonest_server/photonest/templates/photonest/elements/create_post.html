@@ -7,12 +7,12 @@
             <input type="hidden" name="next" value="{{ create_post_url }}">
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Klasse</legend>
-                {{ form.school_class|add_class:"w-full select rounded-full" }}
+                {{ create_post_form.school_class|add_class:"w-full select rounded-full" }}
               </fieldset>
             
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Beschreibung</legend>
-                {{ form.description|add_class:"w-full textarea h-24" }}
+                {{ create_post_form.description|add_class:"w-full textarea h-24" }}
                 <label class="fieldset-label">max. 500 Zeichen</label>
             </fieldset>
 

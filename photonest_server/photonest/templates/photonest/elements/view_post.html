@@ -1,4 +1,5 @@
 {% load post_tags %}
+{% load widget_tweaks %}
 <div class="w-full max-w-96 m-2 max-md:mx-0 relative">
 {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
   <div class="card bg-base-100 w-full max-w-96 shadow-xl">  
@@ -87,6 +88,10 @@
           {% if post.is_used %}<div class="badge">Verwendet am {{ post.used_at|date:"SHORT_DATE_FORMAT" }}</div>{% endif %}
         </h2>
         <p class="m-2 text-base text-wrap w-full ">{{ post.description }}</p>
+        {% if perms.photonest.favor_post or request.user.is_superuser %}{% if post.is_reported == True %}<div>
+          <h3 class="m-2 mb-0 text-base w-full font-bold">Gemeldet - Begründung:</h3>
+          <p class="m-2 mt-0 text-base text-wrap w-full ">{{ post.reported_for }}</p>
+        </div>{% endif %}{% endif %}
         <div class="card-actions items-center text-base flex flex-col">
           <div class="flex flex-row justify-between w-full">
             <div class="flex flex-col text-base-300 dark:text-base-content">
@@ -163,18 +168,38 @@
 <dialog id="reportPost{{ pageprefix }}_{{ post.id }}" class="modal">
   <div class="modal-box">
     <h3 class="text-lg font-bold">Post melden?</h3>
-    <p class="py-4">Wollen Sie den Post wirklich melden?</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
-      </form>
-      <form method="post" action="/posts/{{ post.id }}/report/">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="gallery">
-        <button type="submit" class="btn btn-warning btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Melden</button>
-      </form>
-    </div>
+    <form method="post" action="/posts/{{ post.id }}/report/" class="w-full" id="reportForm{{ pageprefix }}_{{ post.id }}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="gallery">
+      <input type="hidden" name="page_number" id="reportPost{{ pageprefix }}_{{ post.id }}_media_number" value="">
+      
+      <div class="py-4">
+        <fieldset class="fieldset">
+          <legend class="fieldset-legend">Begründung</legend>
+          {{ report_form.reason|add_class:"w-full textarea h-24" }}
+          <label class="fieldset-label">max. 500 Zeichen</label>
+        </fieldset>
+      </div>
+
+      <div class="modal-action">
+        <button 
+          type="button" 
+          class="btn btn-ghost"
+          onclick="document.getElementById('reportPost{{ pageprefix }}_{{ post.id }}').close(); document.getElementById('reportForm{{ pageprefix }}_{{ post.id }}').reset();"
+        >
+          <i class="fa-regular fa-xmark"></i>&ensp;Abbrechen
+        </button>
+
+        <button type="submit" class="btn btn-warning btn-soft">
+          <i class="fa-regular fa-flag"></i>&ensp;Melden
+        </button>
+      </div>
+    </form>
   </div>
+
+  <form method="dialog" class="modal-backdrop">
+    <button onclick="document.getElementById('reportForm{{ pageprefix }}_{{ post.id }}').reset()">close</button>
+  </form>
 </dialog>
 
 <dialog id="releasePost{{ pageprefix }}_{{ post.id }}" class="modal">

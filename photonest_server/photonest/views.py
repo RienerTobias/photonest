@@ -9,7 +9,7 @@ from django.utils.timezone import now
 from django.utils import timezone
 from datetime import datetime
 from django.db.models import Count, Q
-from .forms import PostForm
+from .forms import PostForm, ReportForm
 from .models import Post, Media, SchoolClass
 from .filters import PostFilter
 import magic
@@ -24,7 +24,8 @@ def home(request):
     return render(request, 'photonest/sites/home.html', {
         'newest_posts': Post.objects.filter(is_reported=False).order_by('-uploaded_at')[:3],
         'top_posts': Post.objects.filter(is_reported=False).annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
-        'form': PostForm(),
+        'create_post_form': PostForm(),
+        'report_form': ReportForm(),
         'create_post_url': 'home',
         'timestamp': now().timestamp(),
         'max_files': 15,
@@ -46,7 +47,8 @@ def gallery(request):
     return render(request, 'photonest/sites/gallery.html', {
         'filter': filter,
         'form': PostForm(),
-        'create_post_url': 'gallery',
+        'create_post_form': 'gallery',
+        'report_form': ReportForm(),
         'timestamp': now().timestamp(),
         'max_files': 15,
         'pageprefix': 'gallery',
@@ -120,12 +122,14 @@ def dashboard(request):
 def profile(request):    
     return render(request, 'photonest/sites/profile.html', {
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
 def settings(request):    
     return render(request, 'photonest/sites/settings.html', {
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -225,23 +229,26 @@ def delete_post(request, post_id):
     return redirect(request.POST.get('next', 'home'))
 
 @login_required
+@require_POST
 def report_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    form = ReportForm(request.POST, request.FILES)
+    if form.is_valid():
+        reason = form.cleaned_data['reason']
+        reason += f" (Foto/Video Nr. {request.POST.get('page_number', 'undefined')})"
+        post.report(user=request.user, reported_for=reason)
 
-    if(post.is_reported == True):
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Post wurde gemeldet!"
+        request.session['alert_icon'] = "flag"
+        request.session['alert_type'] = "warning"
+    else:
         request.session['show_alert'] = True
         request.session['alert_message'] = "Melden Fehlgeschlagen!"
         request.session['alert_icon'] = "xmark"
         request.session['alert_type'] = "error"
-        return redirect(request.POST.get('next', 'home'))
-
-    post.report(user=request.user)
-
-    request.session['show_alert'] = True
-    request.session['alert_message'] = "Post wurde gemeldet!"
-    request.session['alert_icon'] = "flag"
-    request.session['alert_type'] = "warning"
     return redirect(request.POST.get('next', 'home'))
+
 
 @login_required
 @permission_required('photonest.favor_post')
