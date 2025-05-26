@@ -9,6 +9,12 @@ class PostFilter(django_filters.FilterSet):
         label='Nur meine Favoriten',
         widget=forms.CheckboxInput(attrs={'class': 'checkbox'})
     )
+
+    only_reported = django_filters.BooleanFilter(
+        method='filter_is_reported',
+        label='Gemeldete Posts',
+        widget=forms.CheckboxInput(attrs={'class': 'checkbox'})
+    )
     
     only_liked = django_filters.BooleanFilter(
         method='filter_liked',
@@ -52,6 +58,12 @@ class PostFilter(django_filters.FilterSet):
         if value and hasattr(self, 'request'):
             return queryset.filter(favorites=self.request.user)
         return queryset
+    
+    def filter_is_reported(self, queryset, name, value):
+        if value and hasattr(self, 'request'):
+            return queryset.filter(is_reported=True)
+        else:
+            return queryset.filter(is_reported=False)
 
     def filter_liked(self, queryset, name, value):
         if value and hasattr(self, 'request'):

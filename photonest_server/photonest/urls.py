@@ -11,6 +11,9 @@ urlpatterns = [
     path('posts/<int:post_id>/like/', views.like_post, name='like_post'),
     path('posts/<int:post_id>/favor/', views.favor_post, name='favor_post'),
     path('posts/<int:post_id>/delete/', views.delete_post, name='delete_post'),
+    path('posts/<int:post_id>/report/', views.report_post, name='report_post'),
+    path('posts/<int:post_id>/release/', views.release_post, name='release_post'),
+    path('posts/<int:post_id>/duplicate/', views.duplicate_post, name='duplicate_post'),
     path('posts/<int:post_id>/download/all/', views.download_all_post_media, name='download_all_post_media'),
     path('media/<int:media_id>/download/', views.download_single_media, name='download_single_media'),
 ]

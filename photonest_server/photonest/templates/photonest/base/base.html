@@ -1,17 +1,29 @@
 {% extends 'base.html' %}
 
 {% block base_content %}
-
+{% load static %}
 <body class="w-full h-dvh min-h-dvh flex flex-col">
-    <main class="w-full h-fit flex-grow pb-18">
-        {% block content %}{% endblock %}
-    </main>
-
-    <div class="w-full h-18 flex flex-col items-center p-2 fixed bottom-0 bg-base-100 z-50">
-        {% include 'photonest/base/dock.html' %}
-    </div>
-
-    <dialog id="fullscreen_img" class="modal !bg-black/75">
+  <main class="w-full h-fit flex-grow pb-18">
+    {% block content %}{% endblock %}
+  </main>
+  
+  <div class="w-full h-18 flex flex-col items-center p-2 fixed bottom-0 bg-base-100 z-50">
+    {% include 'photonest/base/dock.html' %}
+  </div>
+  
+  <div id="alert-container" class="w-full max-w-[32rem] h-fit fixed right-0 top-0 p-2 z-[99999]">
+    {% if perms.photonest.favor_post or request.user.is_superuser %}
+        <div class="alert-success alert-warning alert-error hidden"></div>
+        <div role="alert" class="alert alert-warning {% if reported_post_count != 0 %}visible{% else %}hidden{% endif %} m-1" id="report-alert">
+          <i class="fa-regular fa-flag text-lg"></i>
+          <span>Achtung: Gemeldete Beiträge! <a href="/gallery?only_reported=on" class="link">Jetzt ansehen!</a></span>
+          <button onclick="hideAlert(this)" class="cursor-pointer"><i class="fa-solid fa-xmark text-base"></i></button>
+        </div>
+        {% endif %}
+      </div>
+      <script src="{% static 'photonest/js/alert.js' %}?v={{ timestamp }}"></script>
+      
+      <dialog id="fullscreen_img" class="modal !bg-black/75">
         <div class="modal-box bg-transparent w-full h-full max-w-screen max-w-screen">
           <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4 text-lg text-white"><i class="fa-solid fa-xmark"></i></button>
@@ -24,6 +36,7 @@
 
     <script>
         const can_download = {% if perms.photonest.favor_post or request.user.is_superuser %}true{% else %}false{% endif %}
+        {% if show_alert == True %}AddTimedAlert("{{ alert_type }}", "{{ alert_message }}", "{{ alert_icon }}");{% endif %}
     </script>
 </body>
 

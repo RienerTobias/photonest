@@ -6,8 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.forms import formset_factory
 from django.http import JsonResponse, HttpResponse, FileResponse
 from django.utils.timezone import now
+from django.utils import timezone
+from datetime import datetime
 from django.db.models import Count, Q
-from .forms import PostForm
+from .forms import PostForm, ReportForm
 from .models import Post, Media, SchoolClass
 from .filters import PostFilter
 import magic
@@ -17,15 +19,22 @@ from io import BytesIO
 
 # Create your views here.
 @login_required
-def home(request):    
+def home(request):  
+    
     return render(request, 'photonest/sites/home.html', {
-        'newest_posts': Post.objects.all().order_by('-uploaded_at')[:3],
-        'top_posts': Post.objects.all().annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
-        'form': PostForm(),
+        'newest_posts': Post.objects.filter(is_reported=False).order_by('-uploaded_at')[:3],
+        'top_posts': Post.objects.filter(is_reported=False).annotate(_like_count=Count('likes')).order_by('-_like_count')[:3],
+        'create_post_form': PostForm(),
+        'report_form': ReportForm(),
         'create_post_url': 'home',
         'timestamp': now().timestamp(),
         'max_files': 15,
         'pageprefix': 'home',
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required
@@ -38,10 +47,16 @@ def gallery(request):
     return render(request, 'photonest/sites/gallery.html', {
         'filter': filter,
         'form': PostForm(),
-        'create_post_url': 'gallery',
+        'create_post_form': 'gallery',
+        'report_form': ReportForm(),
         'timestamp': now().timestamp(),
         'max_files': 15,
-        'pageprefix': 'gallery'
+        'pageprefix': 'gallery',
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required
@@ -64,10 +79,32 @@ def dashboard(request):
     if sort_field_class.lstrip('-') not in valid_fields_class:
         sort_field_class = '-total_likes'
 
+    current_date = now()
+    if current_date.month >= 9:
+        schuljahr_start = datetime(current_date.year, 9, 1)
+        schuljahr_ende = datetime(current_date.year + 1, 8, 31)
+    else:
+        schuljahr_start = datetime(current_date.year - 1, 9, 1)
+        schuljahr_ende = datetime(current_date.year, 8, 31)
+    schuljahr_start = timezone.make_aware(schuljahr_start)
+    schuljahr_ende = timezone.make_aware(schuljahr_ende)
+
     classes = SchoolClass.objects.annotate(
-        total_uploads=Count('posts', distinct=True),
-        total_likes=Count('posts__likes', distinct=True),
-        total_uses=Count('posts', filter=Q(posts__is_used=True), distinct=True)
+        total_uploads=Count(
+            'posts',
+            filter=Q(posts__uploaded_at__range=(schuljahr_start, schuljahr_ende)),
+            distinct=True
+        ),
+        total_likes=Count(
+            'posts__likes',
+            filter=Q(posts__uploaded_at__range=(schuljahr_start, schuljahr_ende)),
+            distinct=True
+        ),
+        total_uses=Count(
+            'posts',
+            filter=Q(posts__is_used=True) & Q(posts__uploaded_at__range=(schuljahr_start, schuljahr_ende)),
+            distinct=True
+        )
     ).order_by(sort_field_class)
     
     
@@ -78,18 +115,21 @@ def dashboard(request):
         'current_sort_user': sort_field_user,
         'current_sort_class': sort_field_class,
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
 def profile(request):    
     return render(request, 'photonest/sites/profile.html', {
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
 def settings(request):    
     return render(request, 'photonest/sites/settings.html', {
         'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
     })
 
 @login_required
@@ -114,7 +154,15 @@ def create_post(request):
                 media_type='photo' if content_type.startswith('image/') else 'video'
             )
             post.media_files.add(media) 
-        
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Post wurde erstellt!"
+        request.session['alert_icon'] = "check"
+        request.session['alert_type'] = "success"
+    else:
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Hochladen Fehlgeschlagen"
+        request.session['alert_icon'] = "xmark"
+        request.session['alert_type'] = "error"
     return redirect(request.POST.get('next', 'home'))
 
 @login_required
@@ -167,8 +215,73 @@ def delete_post(request, post_id):
     
     if request.user == post.user or request.user.is_superuser or request.user.has_perm('favor_post'):
         post.delete()
-    
+
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Post wurde gelöscht!"
+        request.session['alert_icon'] = "trash"
+        request.session['alert_type'] = "error"
+    else:
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Löschen Fehlgeschlagen!"
+        request.session['alert_icon'] = "xmark"
+        request.session['alert_type'] = "error"
+
     return redirect(request.POST.get('next', 'home'))
+
+@login_required
+@require_POST
+def report_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = ReportForm(request.POST, request.FILES)
+    if form.is_valid():
+        reason = form.cleaned_data['reason']
+        reason += f" (Foto/Video Nr. {request.POST.get('page_number', 'undefined')})"
+        post.report(user=request.user, reported_for=reason)
+
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Post wurde gemeldet!"
+        request.session['alert_icon'] = "flag"
+        request.session['alert_type'] = "warning"
+    else:
+        request.session['show_alert'] = True
+        request.session['alert_message'] = "Melden Fehlgeschlagen!"
+        request.session['alert_icon'] = "xmark"
+        request.session['alert_type'] = "error"
+    return redirect(request.POST.get('next', 'home'))
+
+
+@login_required
+@permission_required('photonest.favor_post')
+def release_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if(post.is_reported == False):
+        return redirect('/gallery?only_reported=on')
+
+    post.release()
+
+    request.session['show_alert'] = True
+    request.session['alert_message'] = "Post wurde wieder freigegeben!"
+    request.session['alert_icon'] = "check"
+    request.session['alert_type'] = "success"
+
+    if(Post.objects.filter(is_reported=True).count() > 0): 
+        return redirect('/gallery?only_reported=on')
+    else:
+        return redirect('/gallery')
+
+@login_required
+@permission_required('photonest.favor_post')
+def duplicate_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    post.duplicate()
+
+    request.session['show_alert'] = True
+    request.session['alert_message'] = "Post wurde dupliziert!"
+    request.session['alert_icon'] = "check"
+    request.session['alert_type'] = "success"
+
+    return redirect('/gallery')
 
 @login_required
 def download_all_post_media(request, post_id):
@@ -184,7 +297,7 @@ def download_all_post_media(request, post_id):
     zip_buffer.seek(0)
     response = HttpResponse(zip_buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="post_{post_id}_media.zip"'
-    post.mark_as_used()
+    post.mark_as_used(used_in="download", used_from=request.user)
     return response
 
 @login_required
@@ -194,5 +307,5 @@ def download_single_media(request, media_id):
 
     related_posts = media.posts.all()
     for post in related_posts:
-        post.mark_as_used()
+        post.mark_as_used(used_in="download", used_from=request.user)
     return FileResponse(open(file_path, 'rb'), as_attachment=True)

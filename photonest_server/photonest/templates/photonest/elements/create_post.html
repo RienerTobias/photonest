@@ -2,17 +2,17 @@
 {% load widget_tweaks %}
 <div class="container mx-auto px-4">
     <div class="bg-base-100 rounded-lg p-6 mb-8">
-        <form method="post" enctype="multipart/form-data" id="postForm" action="{% url 'create_post' %}">
+        <form method="post" enctype="multipart/form-data" id="postForm" action="{% url 'create_post' %}" onsubmit="AddPostSpinner()">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ create_post_url }}">
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Klasse</legend>
-                {{ form.school_class|add_class:"w-full select rounded-full" }}
+                {{ create_post_form.school_class|add_class:"w-full select rounded-full" }}
               </fieldset>
             
             <fieldset class="fieldset">
                 <legend class="fieldset-legend">Beschreibung</legend>
-                {{ form.description|add_class:"w-full textarea h-24" }}
+                {{ create_post_form.description|add_class:"w-full textarea h-24" }}
                 <label class="fieldset-label">max. 500 Zeichen</label>
             </fieldset>
 
@@ -30,7 +30,7 @@
                 <label class="fieldset-label">Foto / Video</label>
             </fieldset>
 
-            <button type="submit" class="btn btn-primary mt-4 w-full rounded-full">
+            <button type="submit" class="btn btn-primary mt-4 w-full rounded-full" id="create-post-button">
                 Post erstellen
             </button>
         </form>
@@ -105,5 +105,11 @@ function dropHandler(ev) {
 
   validateFiles();
   input.dispatchEvent(new Event('change'));
+}
+
+function AddPostSpinner(){
+  const i = document.createElement('i');
+  i.classList = "fa-solid fa-spinner fa-spin";
+  document.getElementById("create-post-button").appendChild(i);
 }
 </script>

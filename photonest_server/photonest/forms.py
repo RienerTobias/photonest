@@ -26,3 +26,10 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['school_class', 'description']
+
+class ReportForm(forms.Form):
+    reason = forms.CharField(
+        label='Begründung',
+        widget=forms.Textarea(attrs={'placeholder': 'Warum melden Sie diesen Inhalt?', 'rows': 4}),
+        max_length=255
+    )

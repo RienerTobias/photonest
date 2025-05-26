@@ -19,7 +19,6 @@
           <legend class="fieldset-legend text-lg">Theme</legend>
           <label class="flex gap-2 cursor-pointer items-center">
             <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="system"/>
-
             Systemstandard
           </label>
           <label class="flex gap-2 cursor-pointer items-center">
@@ -30,6 +29,10 @@
             <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="dark"/>
             Dark
           </label>
+          <!--<label class="flex gap-2 cursor-pointer items-center">
+            <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="highcontrast"/>
+            High-Contrast
+          </label>-->
         </fieldset>
       </div>
       <footer class="w-full h-fit p-4 flex flex-col items-center justify-center text-center">
@@ -38,7 +41,6 @@
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-          // Cookie-Funktionen
           function setCookie(name, value, days) {
               const date = new Date();
               date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -63,32 +65,26 @@
           function deleteCookie(name) {
               document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
           }
-      
-          // Theme-Logik
+
           const themeRadios = document.querySelectorAll('input[name="theme-radios"]');
           const savedTheme = getCookie('theme');
-          
-          // Initialen Zustand setzen
+
           if(savedTheme) {
               themeRadios.forEach(radio => {
                   radio.checked = (radio.value === savedTheme);
               });
               document.documentElement.setAttribute('data-theme', savedTheme);
           } else {
-              // Systemstandard auswählen
               document.querySelector('input[value="system"]').checked = true;
-              // Theme auf Systemeinstellung setzen
               const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
               document.documentElement.setAttribute('data-theme', systemTheme);
           }
-      
-          // Änderungen überwachen
+
           themeRadios.forEach(radio => {
               radio.addEventListener('change', function() {
                   if(this.checked) {
                       if(this.value === 'system') {
                           deleteCookie('theme');
-                          // Auf Systemtheme aktualisieren
                           const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                           document.documentElement.setAttribute('data-theme', systemTheme);
                       } else {
@@ -98,8 +94,7 @@
                   }
               });
           });
-      
-          // Systemtheme-Änderungen live verfolgen
+
           window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
               if(!getCookie('theme')) {
                   const newTheme = e.matches ? 'dark' : 'light';
