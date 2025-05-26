@@ -1,6 +1,4 @@
-// Globale Theme-Steuerung für alle Seiten
 document.addEventListener('DOMContentLoaded', function() {
-    // Cookie-Funktionen
     function getCookie(name) {
         const cookieName = name + "=";
         const decodedCookie = decodeURIComponent(document.cookie);
@@ -15,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
-    // Theme setzen
-    const savedTheme = getCookie('theme') || 'light'; // Fallback auf light
+    const savedTheme = getCookie('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
 });
