@@ -1,0 +1,62 @@
+{% load static %}
+<div class="w-full max-w-3xl mx-auto bg-base-100 rounded-box shadow-xl overflow-hidden">
+  <div class="w-full bg-base-200 p-4">
+    <h3 class="text-lg font-bold text-center">Beitrag ansehen</h3>
+  </div>
+  
+  <div class="w-full flex flex-col items-center justify-center p-4 bg-base-300">
+    <div class="w-full max-w-2xl flex flex-row items-center justify-center">
+      <button class="btn btn-ghost text-xl mr-2 md:m-4">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      
+      <div class="carousel w-full h-96">
+        <div class="carousel-item w-full">
+          <img src="{% static 'photonest/images/logo.png' %}" 
+               alt="Hauptbild" 
+               class="w-full h-full object-contain">
+        </div>
+      </div>
+      
+      <button class="btn btn-ghost text-xl ml-2 md:m-4">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div class="p-4 md:p-6">
+    <h2 class="card-title mb-2">
+      <div class="badge" style="background-color: orange !important;">3AHIT</div>
+      <div class="badge">Verwendet am 01.05.2025</div>
+    </h2>
+    
+    <p class="mt-2 mb-4 text-lg">PhotoNest Logo - Dies ist eine statische Vorschau der Detailansicht</p>
+    
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex flex-col text-base-500">
+        <div class="flex items-center gap-2 mb-1">
+          <i class="fa-regular fa-calendar"></i>
+          <span>08.04.2025</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <i class="fa-regular fa-user"></i>
+          <span>admin</span>
+        </div>
+      </div>
+      
+      <div class="flex gap-4">
+        <div class="flex gap-1 items-center text-error">
+          <i class="fa-solid fa-heart"></i>
+          <span class="font-sans text-lg">5</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="flex justify-center mt-6">
+      <button class="btn btn-warning">
+        <i class="fa-regular fa-flag"></i>
+        &ensp;Post melden
+      </button>
+    </div>
+  </div>
+</div>

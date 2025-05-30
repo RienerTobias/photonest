@@ -1,0 +1,30 @@
+{% load post_tags %}
+{% load static %}
+<div class="w-full max-w-96 m-2 max-md:mx-0 relative">
+<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl"><i class="fa-regular fa-trash"></i></button>
+  <div class="card bg-base-100 w-full max-w-96 shadow-xl">  
+      <figure class="h-96 bg-base-200 p-4">
+              <img src="{% static '/photonest/images/logo.png' %}" alt="Hauptbild">
+      </figure>
+      <div class="card-body shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <h2 class="card-title">
+          <div class="badge" style="background-color: orange !important;">3AHIT</div>
+          <div class="badge">Verwendet am 01.05.2025</div>
+        </h2>
+        <p class="m-2 text-base overflow-hidden text-nowrap relative">
+          <span>PhotoNest Logo</span>
+        </p>
+        <div class="card-actions justify-between text-base">
+          <div class="flex flex-col text-base-300 dark:text-base-content">
+            <label class="text-md"><i class="fa-regular fa-calendar"></i>&ensp;01.04.2025</label>
+            <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;max.mustermann</label>
+          </div>
+          <div class="flex flex-row-reverse text-xl self-end">            
+              <button id="like-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center active:scale-110 ease-out duration-100">
+                    <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">5</span></i> 
+              </button>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
