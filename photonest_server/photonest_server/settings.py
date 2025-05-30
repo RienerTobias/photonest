@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'colorfield',
     'photonest',
+    'docu'
 ]
 
 MIDDLEWARE = [
@@ -108,12 +109,8 @@ WSGI_APPLICATION = 'photonest_server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),   # Or an IP Address that your DB is hosted on
-        'PORT': os.getenv('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 
