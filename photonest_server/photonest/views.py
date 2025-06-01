@@ -78,7 +78,6 @@ def dashboard(request):
     sort_field_class = request.GET.get('sort_class', '-total_likes')
     valid_fields_class = ['class_name', 'total_uploads', 'total_likes', 'total_uses']
     
-    # Sicherheitscheck für Sortierparameter
     if sort_field_class.lstrip('-') not in valid_fields_class:
         sort_field_class = '-total_likes'
 
@@ -322,11 +321,15 @@ def post_versions(request, post_id):
                 resolved_changes[field] = change
         version.changes = resolved_changes
 
-    return render(request, 'photonest/elements/view_post_versions.html', {
+    return render(request, 'photonest/sites/view_post_versions.html', {
         'post': post,
         'versions': versions,
         'timestamp': now().timestamp(),
         'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required
@@ -360,12 +363,16 @@ def edit_post(request, post_id):
 
     max_new_files = 5 - post.media_files.count()
     
-    return render(request, 'photonest/elements/edit_post.html', {
+    return render(request, 'photonest/sites/edit_post.html', {
         'form': form,
         'post': post,
         'max_new_files': max_new_files,
         'timestamp': now().timestamp(),
         'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required
@@ -377,6 +384,10 @@ def view_post(request, post_id):
         'report_form': ReportForm(),
         'reported_post_count': Post.objects.filter(is_reported=True).count(),
         'pageprefix': 'detail',
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
     })
 
 @login_required

@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 <div class="w-full max-w-96 m-2 max-md:mx-0 relative">
 {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
-{% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft absolute top-1 right-1 z-10 shadow-xl" href="{% url 'view_post' post.id %}"><i class="fa-regular fa-expand"></i></a>{% endif %}
+<a class="btn btn-soft absolute top-1 right-1 z-10 shadow-xl" href="{% url 'view_post' post.id %}"><i class="fa-regular fa-expand"></i></a>
 <div class="card bg-base-100 w-full max-w-96 shadow-xl">  
       <figure class="h-96 bg-base-200 p-4" onclick="viewPost{{ pageprefix }}_{{ post.id }}.showModal()">
         {% with first_media=post.media_files.first %}
@@ -32,7 +32,7 @@
             <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
           </div>
           <div class="flex flex-row-reverse text-xl self-end">            
-              <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center cursor-pointer {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                   {% if post|has_liked:user %}
                     <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
                   {% else %}
@@ -40,7 +40,7 @@
                   {% endif %}
               </button>
               {% if perms.photonest.favor_post %}
-              <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center cursor-pointer {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
                 {% if post|has_favored:user %}
                   <i class="fa-solid fa-star text-warning"></i> 
                 {% else %}

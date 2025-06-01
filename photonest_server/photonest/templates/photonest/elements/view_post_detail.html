@@ -28,8 +28,8 @@
   <div class="p-4 w-full h-fit">
     <div class="flex flex-row flex-wrap w-full h-fit items-center justify-center">
       {% if perms.photonest.favor_post or request.user.is_superuser or request.user == post.user %}<div class="tooltip" data-tip="Post bearbeiten"><a href="{% url 'edit_post' post.id %}" class="btn btn-ghost m-1"><i class="fa-regular fa-pen"></i></a></div>{% endif %}
-      {% if perms.photonest.favor_post or request.user.is_superuser or request.user == post.user %}<div class="tooltip" data-tip="Post-Versionen ansehen"><a href="{% url 'post_versions' post.id %}" class="btn btn-ghost m-1"><i class="fa-regular fa-clock-rotate-left"></i></a></div>{% endif %}
-      {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post duplizieren"><button class="btn btn-ghost m-1" onclick="duplicatePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-clone"></i></button></div>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post-Versionen ansehen"><a href="{% url 'post_versions' post.id %}" class="btn btn-ghost m-1"><i class="fa-regular fa-clock-rotate-left"></i></a></div>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post duplizieren"><button class="btn btn-ghost m-1" onclick="duplicatePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-clone"></i></button></div>{% endif %}
       {% if perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post herunterladen"><a class="btn btn-soft btn-info m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i></a></div>{% endif %}
       {% if post.is_reported == False %}<div class="tooltip" data-tip="Post melden"><button class="btn btn-soft btn-warning m-1" onclick="reportPost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i></button></div>{% endif %}
       {% if post.is_reported == True %}<div class="tooltip" data-tip="Post freigeben"><button class="btn btn-soft btn-success m-1" onclick="releasePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i></button></div>{% endif %}
@@ -51,7 +51,7 @@
             <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
           </div>
           <div class="flex flex-row-reverse text-xl">
-            <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+            <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center cursor-pointer {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
               {% if post|has_liked:user %}
                 <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
               {% else %}
@@ -59,7 +59,7 @@
               {% endif %}
             </button>
             {% if perms.photonest.favor_post %}
-            <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+            <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center cursor-pointer {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
               {% if post|has_favored:user %}
                 <i class="fa-solid fa-star text-warning"></i> 
               {% else %}
