@@ -34,6 +34,9 @@ RUN mkdir -p /app/staticfiles && \
     chown -R root:root /app/staticfiles
 
 ENV ALLOWED_HOSTS=*
+ENV BRONZE_MEDAL_LIMIT=1
+ENV SILVER_MEDAL_LIMIT=1
+ENV GOLD_MEDAL_LIMIT=1
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
