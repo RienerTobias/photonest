@@ -23,12 +23,17 @@
       </div>
       <button class="btn btn-ghost text-xl ml-2 md:m-4" onclick="changeMedia({{ post.id }}, '{{ pageprefix }}', 1)" id="btn-media-right-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
-    {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-info m-2" id="media-download-{{ pageprefix }}_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
+    {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-info m-2" id="media-download-{{ pageprefix }}_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Bild Herunterladen</a>{% endif %}
   </div>
   <div class="p-4 w-full h-fit">
     <div class="flex flex-row flex-wrap w-full h-fit items-center justify-center">
-      {% if perms.photonest.favor_post or request.user.is_superuser or request.user == post.user %}<div class="tooltip" data-tip="Post bearbeiten" class="m-2"><a href="{% url 'edit_post' post.id %}"><i class="fa-regular fa-pen text-lg"></i></a></div>{% endif %}
-      {% if perms.photonest.favor_post or request.user.is_superuser or request.user == post.user %}<div class="tooltip" data-tip="Post-Versionen ansehen"><a href="{% url 'post_versions' post.id %}" class="m-2"><i class="fa-regular fa-clock-rotate-left text-lg"></i></a></div>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser or request.user == post.user %}<div class="tooltip" data-tip="Post bearbeiten"><a href="{% url 'edit_post' post.id %}" class="btn btn-ghost m-1"><i class="fa-regular fa-pen"></i></a></div>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser or request.user == post.user %}<div class="tooltip" data-tip="Post-Versionen ansehen"><a href="{% url 'post_versions' post.id %}" class="btn btn-ghost m-1"><i class="fa-regular fa-clock-rotate-left"></i></a></div>{% endif %}
+      {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post duplizieren"><button class="btn btn-ghost m-1" onclick="duplicatePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-clone"></i></button></div>{% endif %}
+      {% if perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post herunterladen"><a class="btn btn-soft btn-info m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i></a></div>{% endif %}
+      {% if post.is_reported == False %}<div class="tooltip" data-tip="Post melden"><button class="btn btn-soft btn-warning m-1" onclick="reportPost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i></button></div>{% endif %}
+      {% if post.is_reported == True %}<div class="tooltip" data-tip="Post freigeben"><button class="btn btn-soft btn-success m-1" onclick="releasePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i></button></div>{% endif %}
+      {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<div class="tooltip" data-tip="Post löschen"><button class="btn btn-soft btn-error m-1" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button></div>{% endif %}
     </div>
       <h2 class="card-title">
         <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
@@ -63,13 +68,6 @@
             </button>
             {% endif %}
           </div>
-        </div>
-        <div class="w-full flex flex-wrap flex-row justify-center">
-          {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-info m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
-          {% if post.is_reported == False %}<button class="btn btn-soft btn-warning m-1" onclick="reportPost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i>&ensp;Post melden</button>{% endif %}
-          {% if post.is_reported == True %}<button class="btn btn-soft btn-success m-1" onclick="releasePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i>&ensp;Post freigeben</button>{% endif %}
-          {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-info m-1" onclick="duplicatePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-clone"></i>&ensp;Post duplizieren</button>{% endif %}
-          {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
         </div>
       </div>
     </div>
