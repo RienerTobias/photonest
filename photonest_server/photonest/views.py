@@ -384,15 +384,27 @@ def download_all_post_media(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     media_files = post.media_files.all()
 
+    info_text = f"Post ID: {post.id}\n"
+    info_text += f"User: {post.user.username}\n"
+    info_text += f"Beschreibung: {post.description}\n"
+    info_text += f"Anzahl Medien: {media_files.count()}\n"
+    info_text += f"Klasse: {post.school_class.class_name}\n"
+    info_text += f"Erstellt am: {post.uploaded_at.strftime('%d.%m.%Y %H:%M')}\n"
+    info_text += f"Likes: {post.likes.count()} (Stand: {timezone.now().strftime('%d.%m.%Y %H:%M')}\n"
+    info_text += f"Favoriten: {post.favorites.count()} (Stand: {timezone.now().strftime('%d.%m.%Y %H:%M')}\n"
+
     zip_buffer = BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for media in media_files:
             file_path = media.media_file.path
             zipf.write(file_path, os.path.basename(file_path))
+        
+        zipf.writestr('info.txt', info_text)
 
     zip_buffer.seek(0)
     response = HttpResponse(zip_buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="post_{post_id}_media.zip"'
+
     post.mark_as_used(used_in="download", used_from=request.user)
     return response
 
