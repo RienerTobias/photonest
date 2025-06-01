@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'colorfield',
     'photonest',
+    'auditlog',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
+    'auditlog.middleware.AuditlogMiddleware',
 ]
 
 ROOT_URLCONF = 'photonest_server.urls'
@@ -232,6 +234,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 #PhotoNest Config
-BRONZE_MEDAL_LIMIT = 1
-SILVER_MEDAL_LIMIT = 3
-GOLD_MEDAL_LIMIT = 5
+BRONZE_MEDAL_LIMIT = int(os.getenv('BRONZE_MEDAL_LIMIT'))
+SILVER_MEDAL_LIMIT = int(os.getenv('SILVER_MEDAL_LIMIT'))
+GOLD_MEDAL_LIMIT = int(os.getenv('GOLD_MEDAL_LIMIT'))

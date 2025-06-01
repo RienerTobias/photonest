@@ -1,0 +1,25 @@
+<dialog id="version_details_{{ version.id }}" class="modal">
+    <div class="modal-box max-w-5xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><i class="fa-regular fa-xmark text-lg"></i></button>
+      </form>
+      <h3 class="text-lg font-bold">Änderungsdetails - Version #{{ forloop.revcounter }}</h3>
+      <div class="mt-4">
+        <h4 class="font-bold mb-2">Geänderte Felder</h4>
+        <ul>
+          {% for field, changes in version.changes.items %}
+          <li class="mb-2">
+            <strong>{{ field }}:</strong>
+            <span class="text-error line-through">{{ changes.0|default:"-" }}</span> →
+            <span class="text-success">{{ changes.1|default:"-" }}</span>
+          </li>
+          {% empty %}
+          <li>Keine Feldänderungen erkannt</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>

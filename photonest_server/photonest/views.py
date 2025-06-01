@@ -9,13 +9,15 @@ from django.utils.timezone import now
 from django.utils import timezone
 from datetime import datetime
 from django.db.models import Count, Q
-from .forms import PostForm, ReportForm
+from .forms import PostForm, ReportForm, PostEditForm
 from .models import Post, Media, SchoolClass
 from .filters import PostFilter
 import magic
 import os
 import zipfile
 from io import BytesIO
+from auditlog.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
 
 # Create your views here.
 @login_required
@@ -47,7 +49,8 @@ def gallery(request):
     return render(request, 'photonest/sites/gallery.html', {
         'filter': filter,
         'form': PostForm(),
-        'create_post_form': 'gallery',
+        'create_post_url': 'gallery',
+        'create_post_form': PostForm(),
         'report_form': ReportForm(),
         'timestamp': now().timestamp(),
         'max_files': 15,
@@ -75,7 +78,6 @@ def dashboard(request):
     sort_field_class = request.GET.get('sort_class', '-total_likes')
     valid_fields_class = ['class_name', 'total_uploads', 'total_likes', 'total_uses']
     
-    # Sicherheitscheck für Sortierparameter
     if sort_field_class.lstrip('-') not in valid_fields_class:
         sort_field_class = '-total_likes'
 
@@ -284,19 +286,136 @@ def duplicate_post(request, post_id):
     return redirect('/gallery')
 
 @login_required
+@permission_required('photonest.favor_post')
+def post_versions(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    content_type = ContentType.objects.get_for_model(Post)
+    versions = LogEntry.objects.filter(
+        content_type=content_type,
+        object_id=post.id
+    ).order_by('-timestamp')
+
+    def resolve_value(field, value):
+        if value in [None, "", "null"]:
+            return "-"
+        try:
+            if field == "user":
+                user = User.objects.get(pk=value)
+                return user.get_full_name() or user.username
+            elif field == "school_class":
+                return str(SchoolClass.objects.get(pk=value))
+        except Exception:
+            return value
+        return value
+
+    for version in versions:
+        resolved_changes = {}
+        for field, change in version.changes_dict.items():
+            if isinstance(change, (list, tuple)) and len(change) == 2:
+                old, new = change
+                resolved_changes[field] = (
+                    resolve_value(field, old),
+                    resolve_value(field, new)
+                )
+            else:
+                resolved_changes[field] = change
+        version.changes = resolved_changes
+
+    return render(request, 'photonest/sites/view_post_versions.html', {
+        'post': post,
+        'versions': versions,
+        'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
+    })
+
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.user != post.user and not request.user.is_superuser:
+        return redirect('view_post', post_id=post.id)
+    
+    if request.method == 'POST':
+        form = PostEditForm(
+            request.POST, 
+            request.FILES, 
+            instance=post, 
+            user=request.user
+        )
+        if form.is_valid():
+            form.save()
+            request.session['show_alert'] = True
+            request.session['alert_message'] = "Post wurde bearbeitet!"
+            request.session['alert_icon'] = "check"
+            request.session['alert_type'] = "success"
+            return redirect('view_post', post_id=post.id)
+        else:
+            request.session['show_alert'] = True
+            request.session['alert_message'] = "Post bearbeiten fehlgeschlagen!"
+            request.session['alert_icon'] = "error"
+            request.session['alert_type'] = "xmark"
+    else:
+        form = PostEditForm(instance=post, user=request.user)
+
+    max_new_files = 5 - post.media_files.count()
+    
+    return render(request, 'photonest/sites/edit_post.html', {
+        'form': form,
+        'post': post,
+        'max_new_files': max_new_files,
+        'timestamp': now().timestamp(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
+    })
+
+@login_required
+def view_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    return render(request, 'photonest/sites/view_post_detail.html', {
+        'post': post,
+        'timestamp': now().timestamp(),
+        'report_form': ReportForm(),
+        'reported_post_count': Post.objects.filter(is_reported=True).count(),
+        'pageprefix': 'detail',
+        'show_alert': request.session.pop('show_alert', False),
+        'alert_message': request.session.pop('alert_message', ""),
+        'alert_icon': request.session.pop('alert_icon', ""),
+        'alert_type': request.session.pop('alert_type', ""),
+    })
+
+@login_required
 def download_all_post_media(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     media_files = post.media_files.all()
+
+    info_text = f"Post ID: {post.id}\n"
+    info_text += f"User: {post.user.username}\n"
+    info_text += f"Beschreibung: {post.description}\n"
+    info_text += f"Anzahl Medien: {media_files.count()}\n"
+    info_text += f"Klasse: {post.school_class.class_name}\n"
+    info_text += f"Erstellt am: {post.uploaded_at.strftime('%d.%m.%Y %H:%M')}\n"
+    info_text += f"Likes: {post.likes.count()} (Stand: {timezone.now().strftime('%d.%m.%Y %H:%M')}\n"
+    info_text += f"Favoriten: {post.favorites.count()} (Stand: {timezone.now().strftime('%d.%m.%Y %H:%M')}\n"
 
     zip_buffer = BytesIO()
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
         for media in media_files:
             file_path = media.media_file.path
             zipf.write(file_path, os.path.basename(file_path))
+        
+        zipf.writestr('info.txt', info_text)
 
     zip_buffer.seek(0)
     response = HttpResponse(zip_buffer, content_type='application/zip')
     response['Content-Disposition'] = f'attachment; filename="post_{post_id}_media.zip"'
+
     post.mark_as_used(used_in="download", used_from=request.user)
     return response
 
@@ -309,3 +428,20 @@ def download_single_media(request, media_id):
     for post in related_posts:
         post.mark_as_used(used_in="download", used_from=request.user)
     return FileResponse(open(file_path, 'rb'), as_attachment=True)
+
+@login_required
+def delete_media(request, media_id):
+    media = get_object_or_404(Media, id=media_id)
+    if request.user == media.posts.first().user or request.user.is_superuser:
+        post = media.posts.first()
+
+        if media.posts.count() == 1:
+            media.media_file.delete(save=False)
+        media.delete()
+
+    next_url = request.POST.get('next', '')
+    if next_url:
+        return redirect(next_url)
+    elif post:
+        return redirect('edit_post', post_id=post.id)
+    return redirect('gallery')
