@@ -114,8 +114,7 @@ auditlog.register(
     exclude_fields=[
         'likes', 
         'favorites', 
-        'used_from', 
-        'reported_from',
-    ]
+    ],
+    m2m_fields={'used_from', 'reported_from', 'media_files'}
 )
 auditlog.register(Media)
