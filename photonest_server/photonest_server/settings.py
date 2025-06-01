@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'colorfield',
     'photonest',
+    'auditlog',
 ]
 
 MIDDLEWARE = [

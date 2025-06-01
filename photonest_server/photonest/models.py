@@ -4,6 +4,7 @@ from django.utils import timezone
 from colorfield.fields import ColorField
 from django.core.validators import MaxValueValidator
 from photonest.utils import duplicate_instance
+from auditlog.registry import auditlog
 
 class SchoolClass(models.Model):
     class_name = models.CharField(max_length=10, unique=True, verbose_name="Klassenname")
@@ -106,3 +107,16 @@ class Post(models.Model):
     
     def __str__(self):
         return f"Post #{self.id} von {self.user.username}"
+
+
+auditlog.register(
+    Post,
+    exclude_fields=[
+        'likes', 
+        'favorites', 
+        'used_from', 
+        'reported_from',
+    ]
+)
+
+auditlog.register(Media)
