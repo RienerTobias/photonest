@@ -1,0 +1,191 @@
+{% extends "photonest/base/base.html" %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="w-full md:w-2/3 mx-auto px-4">
+  <h1 class="text-2xl font-bold mb-4 text-center m-2">Post #{{ post.id }} von {{post.user}} bearbeiten</h1>
+  
+  <div class="bg-base-100 rounded-lg p-6 mb-8">
+    <form method="post" enctype="multipart/form-data" id="editPostForm" action="{% url 'edit_post' post.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+      <div class="fieldset">
+        <legend class="fieldset-legend">Klasse</legend>
+        {{ form.school_class|add_class:"w-full select rounded-full" }}
+      </div>
+
+      <div class="fieldset">
+        <legend class="fieldset-legend">Beschreibung</legend>
+        {{ form.description|add_class:"w-full textarea h-24"|attr:"placeholder:Beschreibung des Posts..." }}
+        <label class="fieldset-label">max. 500 Zeichen</label>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-bold mb-2">Aktuelle Medien</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+          {% for media in post.media_files.all %}
+          <div class="relative">
+            {% if media.media_type == 'photo' %}
+              <img src="{{ media.media_file.url }}" alt="Media #{{ forloop.counter }}" class="w-full h-32 object-cover rounded-lg">
+            {% else %}
+              <video src="{{ media.media_file.url }}" class="w-full h-32 object-cover rounded-lg"></video>
+            {% endif %}
+            <button 
+              type="button" 
+              class="btn btn-xs btn-error absolute top-1 right-1"
+              onclick="document.getElementById('delete_media_{{ media.id }}').showModal()"
+            >
+              <i class="fa-regular fa-trash"></i>
+            </button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="border-2 border-primary border-dashed rounded-3xl flex items-center justify-center mt-2 z-10 transition ease-in-out max-md:hidden" 
+           id="dropZone"
+           ondrop="dropHandler(event)" 
+           ondragover="dragOverHandler(event)" 
+           ondragleave='dragLeaveHandler(event)'>
+        <p class="text-xl m-4">Neue Fotos/Videos hier ablegen!</p>
+      </div>
+      
+      <div class="fieldset mt-4">
+        <legend class="fieldset-legend">Neue Dateien hinzufügen</legend>
+        <input type="file" name="new_media_files" multiple 
+               accept="image/*,video/*" 
+               class="w-full file-input rounded-full"
+               id="mediaUpload"
+               onchange="validateFiles()">
+        <label class="fieldset-label">Maximal {{ max_new_files }} zusätzliche Dateien</label>
+      </div>
+
+      {% if form.errors %}
+        <div class="alert alert-error mt-4">
+          <ul>
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                <li>{{ field|title }}: {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <div class="flex flex-wrap justify-end mt-6">
+        <a href="{% url 'view_post' post.id %}" class="btn btn-ghost m-2 rounded-full">
+          <i class="fa-regular fa-xmark"></i>&ensp;Abbrechen
+        </a>
+        <button type="submit" class="btn btn-primary m-2 rounded-full">
+          <i class="fa-regular fa-save"></i>&ensp;Änderungen speichern
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% for media in post.media_files.all %}
+<dialog id="delete_media_{{ media.id }}" class="modal">
+  <div class="modal-box">
+    <h3 class="text-lg font-bold">Medium löschen?</h3>
+    <p class="py-4">Wollen Sie dieses Medium wirklich aus dem Post entfernen?</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
+      </form>
+      <form method="post" action="{% url 'delete_media' media.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="btn btn-error btn-soft">
+          <i class="fa-regular fa-trash"></i>&ensp;Löschen
+        </button>
+      </form>
+    </div>
+  </div>
+</dialog>
+{% endfor %}
+
+<script>
+function validateFiles() {
+  const fileUpload = document.getElementById("mediaUpload");
+  const files = fileUpload.files;
+  
+  if (files.length > {{ max_new_files }}) {
+    alert("Sie können maximal {{ max_new_files }} neue Dateien hinzufügen.");
+    fileUpload.value = "";
+    return false;
+  }
+  
+  return true;
+}
+
+function dragOverHandler(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  document.getElementById('dropZone').style.transform = "scale(1.1)";
+  document.getElementById('dropZone').classList.add('bg-base-200');
+}
+
+function dragLeaveHandler(ev) {
+  ev.preventDefault();
+  const dropZone = document.getElementById('dropZone');
+  if (!dropZone.contains(ev.relatedTarget)) {
+    dropZone.style.transform = "scale(1)";
+    dropZone.classList.remove('bg-base-200');
+  }
+}
+
+function dropHandler(ev) {
+  ev.preventDefault();
+  ev.stopPropagation();
+  document.getElementById('dropZone').style.transform = "scale(1)";
+  document.getElementById('dropZone').classList.remove('bg-base-200');
+
+  const input = document.getElementById('mediaUpload');
+  const existingFiles = input.files;
+  const newFiles = ev.dataTransfer.files;
+
+  const allowedTypes = input.accept.split(',').map(type => type.trim());
+  let validNewFiles = Array.from(newFiles).filter(file => {
+    return allowedTypes.some(type => {
+      if (type.endsWith('/*')) {
+        const mainType = type.split('/')[0];
+        return file.type.startsWith(mainType);
+      }
+      return file.type === type;
+    });
+  });
+
+  const totalFiles = existingFiles.length + validNewFiles.length;
+  if (totalFiles > {{ max_new_files }}) {
+    alert(`Maximal {{ max_new_files }} Dateien erlaubt! Bereits ${existingFiles.length} Dateien ausgewählt.`);
+    return;
+  }
+
+  const dataTransfer = new DataTransfer();
+  
+  for (let file of existingFiles) {
+    dataTransfer.items.add(file);
+  }
+  
+  for (let file of validNewFiles) {
+    dataTransfer.items.add(file);
+  }
+
+  input.files = dataTransfer.files;
+
+  validateFiles();
+  input.dispatchEvent(new Event('change'));
+}
+
+function addSpinner() {
+  const button = document.querySelector('#editPostForm button[type="submit"]');
+  const spinner = document.createElement('i');
+  spinner.classList = "fa-solid fa-spinner fa-spin ml-2";
+  button.appendChild(spinner);
+  button.disabled = true;
+}
+
+document.getElementById('editPostForm').addEventListener('submit', addSpinner);
+</script>
+{% endblock %}

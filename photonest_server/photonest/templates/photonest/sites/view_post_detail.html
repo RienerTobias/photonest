@@ -1,0 +1,71 @@
+{% extends 'photonest/base/base.html' %}
+
+{% block title %}Gallerie | Photonest{% endblock %}
+
+{% block content %}
+{% load static %}
+{% load post_tags %}
+{% load widget_tweaks %}
+<main class="w-full h-full flex flex-col items-center">
+    <h1 class="text-4xl font-bold m-6">POST</h1>
+    <div class="w-full md:w-2/3 h-full flex flex-col md:flex-row items-center justify-center flex-wrap p-4">
+        {% include 'photonest/elements/view_post_detail.html' %}
+        
+        {% include 'photonest/dialogs/delete_post.html' %}
+        {% include 'photonest/dialogs/duplicate_post.html' %}
+        {% include 'photonest/dialogs/report_post.html' %}
+        {% include 'photonest/dialogs/release_post.html' %}
+        
+        <div class="flex flex-row-reverse text-xl self-end hidden">            
+            <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+                {% if post|has_liked:user %}
+                  <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                {% else %}
+                  <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
+                {% endif %}
+            </button>
+            {% if perms.photonest.favor_post %}
+            <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
+              {% if post|has_favored:user %}
+                <i class="fa-solid fa-star text-warning"></i> 
+              {% else %}
+                <i class="fa-regular fa-star text-warning"></i> 
+              {% endif %}
+            </button>
+            {% endif %}
+        </div>
+        
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              initMediaPlayer({{ post.id }}, '{{ pageprefix }}', [
+                  {% for media in post.media_files.all %}
+                  { 
+                      type: '{{ media.media_type }}', 
+                      url: '{{ media.media_file.url }}',
+                      id: '{{ media.id }}',
+                  },
+                  {% endfor %}
+              ]);
+          });
+        
+          var videoNode_{{ pageprefix }}_{{ post.id }} = document.getElementById('video-{{ pageprefix }}-preview_{{ post.id }}');
+          if (videoNode_{{ pageprefix }}_{{ post.id }} ) {
+            videoNode_{{ pageprefix }}_{{ post.id }}.addEventListener('click', function(event){
+              event.preventDefault();
+            });
+          }
+          </script>
+    </div>
+</main>
+<script src="{% static 'photonest/js/post_like.js' %}?v={{ timestamp }}"></script>
+<script src="{% static 'photonest/js/post_favor.js' %}?v={{ timestamp }}"></script>
+<script src="{% static 'photonest/js/post_mediaPlayer.js' %}?v={{ timestamp }}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      const select = document.getElementById('id_ordering');
+      if (select && !select.value) {
+          select.value = '-uploaded_at';
+      }
+  });
+</script>
+{% endblock %}

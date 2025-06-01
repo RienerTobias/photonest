@@ -118,5 +118,4 @@ auditlog.register(
         'reported_from',
     ]
 )
-
 auditlog.register(Media)

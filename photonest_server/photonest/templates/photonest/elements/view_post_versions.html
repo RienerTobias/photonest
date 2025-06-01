@@ -1,0 +1,86 @@
+{% extends "photonest/base/base.html" %}
+{% block content %}
+<div class="w-full md:w-2/3 mx-auto px-4">
+  <h1 class="text-2xl font-bold mb-4 text-center">Versionshistorie für Post #{{ post.id }} von {{ post.user }}</h1>
+  <a href="{% url 'view_post' post.id %}" class="btn btn-primary btn-soft mb-4"><i class="fa-solid fa-arrow-left"></i>&ensp;Zurück zum Post</a>
+
+  <div class="bg-base-100 rounded-lg p-4 mb-8">
+    <div class="hidden md:block">
+      <table class="table w-full">
+        <thead>
+          <tr>
+            <th>Version</th>
+            <th>Datum</th>
+            <th>Benutzer</th>
+            <th>Änderungen</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for version in versions %}
+          <tr>
+            <td>{{ forloop.revcounter }}</td>
+            <td>{{ version.timestamp|date:"SHORT_DATETIME_FORMAT" }}</td>
+            <td>{{ version.actor|default:"unknown" }}</td>
+            <td>
+              {% if version.action == 0 %}
+                <span class="badge badge-success">Erstellt</span>
+              {% elif version.action == 1 %}
+                <span class="badge badge-info">Aktualisiert</span>
+              {% elif version.action == 2 %}
+                <span class="badge badge-error">Gelöscht</span>
+              {% endif %}
+            </td>
+            <td>
+              <button class="btn btn-xs btn-ghost" onclick="document.getElementById('version_details_{{ version.id }}').showModal()">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="md:hidden space-y-4">
+      {% for version in versions %}
+      <div class="shadow-xl border border-base-300 rounded-lg p-4">
+        <div class="flex justify-between mb-2">
+          <span class="text-sm font-semibold">Version</span>
+          <span>#{{ forloop.revcounter }}</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-sm font-semibold">Datum</span>
+          <span>{{ version.timestamp|date:"SHORT_DATETIME_FORMAT" }}</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-sm font-semibold">Benutzer</span>
+          <span>{{ version.actor|default:"unknown" }}</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-sm font-semibold">Änderung</span>
+          <span>
+            {% if version.action == 0 %}
+              <span class="badge badge-success">Erstellt</span>
+            {% elif version.action == 1 %}
+              <span class="badge badge-info">Aktualisiert</span>
+            {% elif version.action == 2 %}
+              <span class="badge badge-error">Gelöscht</span>
+            {% endif %}
+          </span>
+        </div>
+        <div class="text-right mt-2">
+          <button class="btn btn-soft btn-block" onclick="document.getElementById('version_details_{{ version.id }}').showModal()">
+            <i class="fa-regular fa-eye"></i>&ensp;Details
+          </button>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% for version in versions %}
+{% include 'photonest/dialogs/post_version.html' %}
+{% endfor %}
+{% endblock %}

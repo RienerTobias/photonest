@@ -2,7 +2,8 @@
 {% load widget_tweaks %}
 <div class="w-full max-w-96 m-2 max-md:mx-0 relative">
 {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
-  <div class="card bg-base-100 w-full max-w-96 shadow-xl">  
+{% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft absolute top-1 right-1 z-10 shadow-xl" href="{% url 'view_post' post.id %}"><i class="fa-regular fa-expand"></i></a>{% endif %}
+<div class="card bg-base-100 w-full max-w-96 shadow-xl">  
       <figure class="h-96 bg-base-200 p-4" onclick="viewPost{{ pageprefix }}_{{ post.id }}.showModal()">
         {% with first_media=post.media_files.first %}
           {% if first_media %}
@@ -57,167 +58,17 @@
     <form method="dialog">
       <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"><i class="fa-regular fa-xmark text-lg"></i></button>
     </form>
-    <h3 class="text-lg font-bold">Beitrag ansehen</h3>
-    <div class="w-full h-full flex flex-col items-center justify">
-      <div class="w-full h-fit flex flex-row items-center justify-center">
-        <button class="btn btn-ghost text-xl mr-2 md:m-4" onclick="changeMedia({{ post.id }}, '{{ pageprefix }}', -1)" id="btn-media-left-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-left"></i></button>
-        <div class="carousel w-full h-[26rem] md:h-[32rem]" id="carousel-container-{{ pageprefix }}-{{ post.id }}">
-          {% with media=post.media_files.first %}
-          <div class="carousel-item w-full">
-            {% if media %}
-              {% if media.media_type == 'photo' %}
-                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain">
-                <video src="{{ media.media_file.url }}" id="current-video-{{ pageprefix }}-{{ post.id }}" controls class="w-full h-full object-contain hidden"></video>
-              {% else %}
-                <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain hidden">
-                <video src="{{ media.media_file.url }}" id="current-video-{{ pageprefix }}-{{ post.id }}" controls class="w-full h-full object-contain"></video>
-              {% endif %}
-            {% else %}
-              <p>Keine Medien vorhanden</p>
-            {% endif %}
-          </div>
-          {% endwith %}
-        </div>
-        <button class="btn btn-ghost text-xl ml-2 md:m-4" onclick="changeMedia({{ post.id }}, '{{ pageprefix }}', 1)" id="btn-media-right-{{ pageprefix }}-{{ post.id }}"><i class="fa-solid fa-chevron-right"></i></button>
-      </div>
-      {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-info m-2" id="media-download-{{ pageprefix }}_{{ post.id }}"><i class="fa-regular fa-download"></i>&ensp;Herunterladen</a>{% endif %}
-    </div>
-    <div class="p-4 w-full h-fit">
-        <h2 class="card-title">
-          <div class="badge" style="background-color: {{ post.school_class.color }} !important;">{{ post.school_class }}</div>
-          {% if post.is_used %}<div class="badge">Verwendet am {{ post.used_at|date:"SHORT_DATE_FORMAT" }}</div>{% endif %}
-        </h2>
-        <p class="m-2 text-base text-wrap w-full ">{{ post.description }}</p>
-        {% if perms.photonest.favor_post or request.user.is_superuser %}{% if post.is_reported == True %}<div>
-          <h3 class="m-2 mb-0 text-base w-full font-bold">Gemeldet - Begründung:</h3>
-          <p class="m-2 mt-0 text-base text-wrap w-full ">{{ post.reported_for }}</p>
-        </div>{% endif %}{% endif %}
-        <div class="card-actions items-center text-base flex flex-col">
-          <div class="flex flex-row justify-between w-full">
-            <div class="flex flex-col text-base-300 dark:text-base-content">
-              <label class="text-md"><i class="fa-regular fa-calendar"></i>&ensp;{{ post.uploaded_at|date:"SHORT_DATE_FORMAT" }}</label>
-              <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;{{ post.user }}</label>
-            </div>
-            <div class="flex flex-row-reverse text-xl">
-              <button onclick="likePost({{ post.id }}, '{{ pageprefix }}')" id="like-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_liked:user %}liked{% endif %} active:scale-110 ease-out duration-100">
-                {% if post|has_liked:user %}
-                  <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
-                {% else %}
-                  <i class="fa-regular fa-heart text-error"><span class="ml-2 text-error font-sans">{{ post.like_count }}</span></i> 
-                {% endif %}
-              </button>
-              {% if perms.photonest.favor_post %}
-              <button onclick="favorPost({{ post.id }}, '{{ pageprefix }}')" id="favor-btn-{{ pageprefix }}-modal_{{ post.id }}" class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center {% if post|has_favored:user %}liked{% endif %} active:scale-110 ease-out duration-100">
-                {% if post|has_favored:user %}
-                  <i class="fa-solid fa-star text-warning"></i> 
-                {% else %}
-                  <i class="fa-regular fa-star text-warning"></i> 
-                {% endif %}
-              </button>
-              {% endif %}
-            </div>
-          </div>
-          <div class="w-full flex flex-wrap flex-row justify-center">
-            {% if perms.photonest.favor_post or request.user.is_superuser %}<a class="btn btn-soft btn-info m-1" href="{% url 'download_all_post_media' post.id %}"><i class="fa-regular fa-download"></i>&ensp;Alle Herunterladen</a>{% endif %}
-            {% if post.is_reported == False %}<button class="btn btn-soft btn-warning m-1" onclick="reportPost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i>&ensp;Post melden</button>{% endif %}
-            {% if post.is_reported == True %}<button class="btn btn-soft btn-success m-1" onclick="releasePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-flag"></i>&ensp;Post freigeben</button>{% endif %}
-            {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-info m-1" onclick="duplicatePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-clone"></i>&ensp;Post duplizieren</button>{% endif %}
-            {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error m-1" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i>&ensp;Post löschen</button>{% endif %}
-          </div>
-        </div>
-      </div>
+    <h3 class="text-lg font-bold mb-4">Beitrag ansehen</h3>
+    {% include 'photonest/elements/view_post_detail.html' %}
   </div>
   <form method="dialog" class="modal-backdrop">
     <button>close</button>
   </form>
 </dialog>
-<dialog id="deletePost{{ pageprefix }}_{{ post.id }}" class="modal">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold">Post löschen?</h3>
-    <p class="py-4">Wollen Sie den Post wirklich löschen?</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
-      </form>
-      <form method="post" action="/posts/{{ post.id }}/delete/">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="gallery">
-        <button type="submit" class="btn btn-error btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Löschen</button>
-      </form>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="duplicatePost{{ pageprefix }}_{{ post.id }}" class="modal">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold">Post duplizieren?</h3>
-    <p class="py-4">Wollen Sie den Post wirklich duplizieren?</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
-      </form>
-      <form method="post" action="/posts/{{ post.id }}/duplicate/">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="gallery">
-        <button type="submit" class="btn btn-info btn-soft"><i class="fa-regular fa-clone"></i>&ensp;Duplizieren</button>
-      </form>
-    </div>
-  </div>
-</dialog>
-
-<dialog id="reportPost{{ pageprefix }}_{{ post.id }}" class="modal">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold">Post melden?</h3>
-    <form method="post" action="/posts/{{ post.id }}/report/" class="w-full" id="reportForm{{ pageprefix }}_{{ post.id }}">
-      {% csrf_token %}
-      <input type="hidden" name="next" value="gallery">
-      <input type="hidden" name="page_number" id="reportPost{{ pageprefix }}_{{ post.id }}_media_number" value="">
-      
-      <div class="py-4">
-        <fieldset class="fieldset">
-          <legend class="fieldset-legend">Begründung</legend>
-          {{ report_form.reason|add_class:"w-full textarea h-24" }}
-          <label class="fieldset-label">max. 500 Zeichen</label>
-        </fieldset>
-      </div>
-
-      <div class="modal-action">
-        <button 
-          type="button" 
-          class="btn btn-ghost"
-          onclick="document.getElementById('reportPost{{ pageprefix }}_{{ post.id }}').close(); document.getElementById('reportForm{{ pageprefix }}_{{ post.id }}').reset();"
-        >
-          <i class="fa-regular fa-xmark"></i>&ensp;Abbrechen
-        </button>
-
-        <button type="submit" class="btn btn-warning btn-soft">
-          <i class="fa-regular fa-flag"></i>&ensp;Melden
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <form method="dialog" class="modal-backdrop">
-    <button onclick="document.getElementById('reportForm{{ pageprefix }}_{{ post.id }}').reset()">close</button>
-  </form>
-</dialog>
-
-<dialog id="releasePost{{ pageprefix }}_{{ post.id }}" class="modal">
-  <div class="modal-box">
-    <h3 class="text-lg font-bold">Post freigeben?</h3>
-    <p class="py-4">Wollen Sie den Post wirklich wieder freigeben?</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
-      </form>
-      <form method="post" action="/posts/{{ post.id }}/release/">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="gallery">
-        <button type="submit" class="btn btn-success btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Freigeben</button>
-      </form>
-    </div>
-  </div>
-</dialog>
+{% include 'photonest/dialogs/delete_post.html' %}
+{% include 'photonest/dialogs/duplicate_post.html' %}
+{% include 'photonest/dialogs/report_post.html' %}
+{% include 'photonest/dialogs/release_post.html' %}
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
