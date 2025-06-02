@@ -1,0 +1,106 @@
+{% block content %}
+{% load static %}
+{% load widget_tweaks %}
+<main class="min-h-screen w-full flex flex-col items-center p-4">
+    <h1 class="text-3xl md:text-4xl font-bold my-4 md:my-6 text-center">Übersicht</h1>
+    
+    <h2 class="text-2xl md:text-3xl font-bold my-4 md:my-6 text-center">PhotoNest</h2>
+    
+    <div class="w-full max-w-4xl flex flex-col">
+        <div class="prose prose-base md:prose-lg max-w-none mb-8">
+            <p class="mb-4">
+                PhotoNest ist eine webbasierte Plattform, die als zentraler Social Media Collector für die HTL dient. 
+                Ziel der Anwendung ist es, den Arbeitsaufwand der für Social Media verantwortlichen Personen zu reduzieren 
+                und gleichzeitig die Außendarstellung der Schule auf Plattformen wie Instagram und Facebook zu verbessern.
+            </p>
+            
+            <h3 class="text-xl md:text-2xl font-bold my-4 flex justify-center">Funktionsweise</h3>
+            <p class="mb-4">
+                Die Webseite ermöglicht es Schülerinnen und Schülern, schnell und unkompliziert Bilder oder Videos von 
+                schulischen Aktivitäten hochzuladen. Zu jedem Beitrag kann ein kurzer Begleittext verfasst werden, um den 
+                Inhalt zu beschreiben oder in einen Kontext zu setzen. Andere Nutzer der Plattform können Beiträge liken, 
+                ähnlich wie bei bekannten sozialen Netzwerken wie Instagram.
+            </p>
+            <p class="mb-4">
+                Ein zentrales Element von PhotoNest ist die Rolle des Head of Social Media: Diese Person hat Zugriff auf 
+                alle hochgeladenen Beiträge und kann daraus gezielt geeignete Inhalte auswählen, um sie direkt oder nach 
+                Aufbereitung auf den offiziellen Kanälen der Schule (Instagram, Facebook) zu veröffentlichen.
+            </p>
+            
+            <h3 class="text-xl md:text-2xl font-bold my-4 flex justify-center">Zielsetzung</h3>
+            <p class="mb-4">
+                Mit PhotoNest wird der Beitragsfluss aus dem Schulalltag automatisiert und vereinfacht. Statt Beiträge 
+                manuell zu sammeln, kann der Social Media Verantwortliche aus einer kuratierten Sammlung von Inhalten 
+                auswählen. Dies spart Zeit, erhöht die Beteiligung der Schülerschaft und sorgt dafür, dass aktuelle, 
+                authentische Inhalte regelmäßig veröffentlicht werden.
+            </p>
+            <p>
+                Gleichzeitig stärkt die Plattform das Engagement der Schüler und fördert ein aktives Mitwirken an der 
+                Außendarstellung der Schule. Durch die einfache Möglichkeit, Inhalte zu teilen, wird die Sichtbarkeit 
+                der vielfältigen Aktivitäten an der HTL erhöht.
+            </p>
+        </div>
+        
+        <h3 class="text-2xl md:text-3xl font-bold my-4 flex justify-center">Wie sehen Beiträge aus</h3>
+        <div class="flex flex-col lg:flex-row gap-6 items-stretch">
+            <div class="card bg-base-200 shadow-sm flex-1">
+                <div class="card-body">
+                    <h2 class="card-title text-xl md:text-2xl mb-4">Beitrag Übersicht</h2>
+                    
+                    <div class="space-y-4">
+                        <p class="font-semibold">Funktion:</p>
+                        <p>Zeigt eine Überblick über einen Beitrag</p>
+        
+                        <div class="divider my-2"></div>
+        
+                        <p class="font-semibold">Struktur pro Beitrag:</p>
+                        <ul class="pl-6 space-y-2 list-disc">
+                            <li>Klasse (z.B. <span style="background-color: orange !important;" class="badge badge-neutral border-none">3AHIT</span>)</li>
+                            <li>Verwendung (z.B. <span class="badge">Verwendet am 01.05.2025</span>)</li>
+                            <li>Inhaltsbeschreibung (z.B. PhotoNest Logo)</li>
+                            <li>Datum im Format 01.04.2025</li>
+                            <li>Autor (z.B. max.mustermann)</li>
+                            <li>Gefällt mir angabe (z.B. 5)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 min-w-[300px]">
+                {% include 'docu/elements/post_overview.html' %}
+            </div>
+        </div>
+
+        <br>
+
+        <div class="flex flex-col lg:flex-row gap-6 items-stretch">
+            <div class="card bg-base-200 shadow-sm flex-1">
+                <div class="card-body">
+                    <h2 class="card-title text-xl md:text-2xl mb-4">Beitrag Detail</h2>
+                    
+                    <div class="space-y-4">
+                        <p class="font-semibold">Funktion:</p>
+                        <p>Zeigt eine Detailansicht über einen Beitrag</p>
+        
+                        <div class="divider my-2"></div>
+        
+                        <p class="font-semibold">Struktur pro Beitrag:</p>
+                        <ul class="pl-6 space-y-2 list-disc">
+                            <li>Klasse (z.B. <span style="background-color: orange !important;" class="badge badge-neutral border-none">3AHIT</span>)</li>
+                            <li>Inhaltsbeschreibung (z.B. PhotoNest Logo)</li>
+                            <li>Datum im Format 01.04.2025</li>
+                            <li>Autor (z.B. max.mustermann)</li>
+                            <li>Gefällt mir angabe (z.B. 5)</li>
+                            <li>Post melden</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 min-w-[300px]">
+                {% include 'docu/elements/post_detailview.html' %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

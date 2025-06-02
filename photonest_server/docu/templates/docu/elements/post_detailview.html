@@ -1,0 +1,38 @@
+{% load post_tags %}
+{% load widget_tweaks %}
+{% load static %}
+
+<div class="w-full h-fit flex flex-col items-center justify">
+    <div class="w-full h-fit flex flex-row items-center justify-center">
+      <button class="btn btn-ghost text-xl mr-2 md:m-4"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="carousel w-full h-[22rem] md:h-[26rem]">
+        <div class="carousel-item w-full">
+            <img src="{% static 'photonest/images/logo.png' %}" alt="Hauptbild" class="w-full h-full object-contain">
+        </div>
+      </div>
+      <button class="btn btn-ghost text-xl ml-2 md:m-4"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+  <div class="p-4 w-full h-fit">
+    <div class="flex flex-row flex-wrap w-full h-fit items-center justify-center">
+      <div class="tooltip" data-tip="Post melden"><button class="btn btn-soft btn-warning m-1"><i class="fa-regular fa-flag"></i></button></div>
+    </div>
+      <h2 class="card-title">
+        <div class="badge" style="background-color: #f7931d !important;">3AHIT</div>
+        <div class="badge">Verwendet am 03.06.2025</div>
+      </h2>
+      <p class="m-2 text-base text-wrap w-full ">Eine Beispiel-Beschreibung für ein paar Fotos der 3AHIT.</p>
+      <div class="card-actions items-center text-base flex flex-col">
+        <div class="flex flex-row justify-between w-full">
+          <div class="flex flex-col text-base-300 dark:text-base-content">
+            <label class="text-md"><i class="fa-regular fa-calendar"></i>&ensp;02.06.2025</label>
+            <label class="text-md"><i class="fa-regular fa-user"></i>&ensp;max.mustermann</label>
+          </div>
+          <div class="flex flex-row-reverse text-xl">
+            <button class="m-2 w-fit h-fit flex flex-row items-center justify-center text-center align-center cursor-pointer active:scale-110 ease-out duration-100">
+                <i class="fa-solid fa-heart text-error"><span class="ml-2 text-error font-sans">5</span></i> 
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
