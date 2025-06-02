@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Docu | Photonest{% endblock %}
+
+{% block base_content %}
+
+<body class="w-full h-full flex flex-col items-center">
+    <main class="w-full h-fit flex flex-grow flex-col items-center pb-18">
+        <h1 class="text-4xl font-bold m-6">Dokumentation</h1>
+
+        <div class="flex flex-row fixed top-4 left-4 text-2xl">
+            <a href="/" class="bt btn-ghost m-1 max-md:fixed max-md:left-4">
+                <i class="fa-regular fa-house">
+                </i>
+            </a>
+        </div>
+
+        <div class="space-y-4 md:space-y-6">
+            {% include 'docu/sites/navbar.html' %}
+            
+
+            <div id="content-uebersicht" class="content">{% include 'docu/sites/overview.html' %}</div>
+            <div id="content-home" class="content" style="display: none;">{% include 'docu/sites/home.html' %}</div>
+            <div id="content-gallerie" class="content" style="display: none;">{% include 'docu/sites/gallery.html' %}</div>
+            <div id="content-dashboard" class="content" style="display: none;">{% include 'docu/sites/dashboard.html' %}</div>
+            <div id="content-profil" class="content" style="display: none;">{% include 'docu/sites/profil.html' %}</div>
+        </div>
+    </main>
+    <script src="{% static 'docu/js/navbar.js' %}"></script>
+</body>
+
+{% endblock %}
