@@ -1,0 +1,16 @@
+<dialog id="releasePost{{ pageprefix }}_{{ post.id }}" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Post freigeben?</h3>
+      <p class="py-4">Wollen Sie den Post wirklich wieder freigeben?</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
+        </form>
+        <form method="post" action="/posts/{{ post.id }}/release/">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="gallery">
+          <button type="submit" class="btn btn-success btn-soft"><i class="fa-regular fa-trash"></i>&ensp;Freigeben</button>
+        </form>
+      </div>
+    </div>
+  </dialog>

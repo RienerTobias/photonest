@@ -51,6 +51,14 @@
                 {{ filter.form.is_used.label }}
               </label>
             </fieldset>
+
+            <fieldset class="fieldset m-1">
+              <legend class="fieldset-legend">Gemeldet</legend>
+              <label class="fieldset-label" for="{{ filter.form.only_reported.id_for_label }}">
+                {% render_field filter.form.only_reported class="checkbox" %}
+                {{ filter.form.only_reported.label }}
+              </label>
+            </fieldset>
             {% endif %}
           </div>
           <div class="flex flex-row justify-center mt-4">

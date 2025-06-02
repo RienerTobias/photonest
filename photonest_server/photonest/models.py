@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from colorfield.fields import ColorField
 from django.core.validators import MaxValueValidator
+from photonest.utils import duplicate_instance
+from auditlog.registry import auditlog
 
 class SchoolClass(models.Model):
     class_name = models.CharField(max_length=10, unique=True, verbose_name="Klassenname")
@@ -43,6 +45,11 @@ class Post(models.Model):
     is_used = models.BooleanField(default=False)
     used_in = models.CharField(max_length=100, blank=True, null=True)
     used_at = models.DateTimeField(blank=True, null=True)
+    used_from = models.ManyToManyField(User, related_name='used_posts', blank=True)
+    is_reported = models.BooleanField(default=False)
+    reported_from = models.ManyToManyField(User, related_name='reported_posts', blank=True)
+    reported_at = models.DateTimeField(blank=True, null=True)
+    reported_for = models.CharField(max_length=255, blank=True, null=True)
     
     @property
     def like_count(self): return self.likes.count()
@@ -51,12 +58,37 @@ class Post(models.Model):
     @property
     def is_favorite(self, user): return self.favorites.filter(id=user.id).exists()
     
-    def mark_as_used(self, used_in=None):
+    def mark_as_used(self, used_from, used_in=None):
         self.is_used = True
         self.used_at = timezone.now()
+        self.used_from.add(used_from)
         if used_in:
             self.used_in = used_in
         self.save()
+    
+    def report(self, user, reported_for):
+        self.is_reported = True
+        self.reported_at = timezone.now()
+        self.reported_from.add(user)
+        self.reported_for = reported_for
+        self.save()
+    
+    def release(self):
+        self.is_reported = False
+        self.reported_from.clear()
+        self.save()
+
+    def duplicate(self):
+        new_post = duplicate_instance(self, exclude_fields=[
+            'media_files', 'likes', 'favorites', 'used_from', 'reported_from'
+        ])
+
+        for media in self.media_files.all():
+            new_media = duplicate_instance(media)
+            new_post.media_files.add(new_media)
+
+        new_post.save()
+        return new_post
 
     def delete(self, *args, **kwargs):
         for media in self.media_files.all():
@@ -75,3 +107,14 @@ class Post(models.Model):
     
     def __str__(self):
         return f"Post #{self.id} von {self.user.username}"
+
+
+auditlog.register(
+    Post,
+    exclude_fields=[
+        'likes', 
+        'favorites', 
+    ],
+    m2m_fields={'used_from', 'reported_from', 'media_files'}
+)
+auditlog.register(Media)

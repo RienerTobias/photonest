@@ -1,0 +1,16 @@
+<dialog id="duplicatePost{{ pageprefix }}_{{ post.id }}" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Post duplizieren?</h3>
+      <p class="py-4">Wollen Sie den Post wirklich duplizieren?</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-ghost"><i class="fa-regular fa-xmark"></i>&ensp;Abbrechen</button>
+        </form>
+        <form method="post" action="/posts/{{ post.id }}/duplicate/">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="gallery">
+          <button type="submit" class="btn btn-info btn-soft"><i class="fa-regular fa-clone"></i>&ensp;Duplizieren</button>
+        </form>
+      </div>
+    </div>
+  </dialog>

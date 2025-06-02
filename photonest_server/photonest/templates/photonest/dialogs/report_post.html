@@ -1,0 +1,37 @@
+{% load widget_tweaks %}
+<dialog id="reportPost{{ pageprefix }}_{{ post.id }}" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Post melden?</h3>
+      <form method="post" action="/posts/{{ post.id }}/report/" class="w-full" id="reportForm{{ pageprefix }}_{{ post.id }}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="gallery">
+        <input type="hidden" name="page_number" id="reportPost{{ pageprefix }}_{{ post.id }}_media_number" value="">
+        
+        <div class="py-4">
+          <fieldset class="fieldset">
+            <legend class="fieldset-legend">Begründung</legend>
+            {{ report_form.reason|add_class:"w-full textarea h-24" }}
+            <label class="fieldset-label">max. 500 Zeichen</label>
+          </fieldset>
+        </div>
+  
+        <div class="modal-action">
+          <button 
+            type="button" 
+            class="btn btn-ghost"
+            onclick="document.getElementById('reportPost{{ pageprefix }}_{{ post.id }}').close(); document.getElementById('reportForm{{ pageprefix }}_{{ post.id }}').reset();"
+          >
+            <i class="fa-regular fa-xmark"></i>&ensp;Abbrechen
+          </button>
+  
+          <button type="submit" class="btn btn-warning btn-soft">
+            <i class="fa-regular fa-flag"></i>&ensp;Melden
+          </button>
+        </div>
+      </form>
+    </div>
+  
+    <form method="dialog" class="modal-backdrop">
+      <button onclick="document.getElementById('reportForm{{ pageprefix }}_{{ post.id }}').reset()">close</button>
+    </form>
+  </dialog>
