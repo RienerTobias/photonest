@@ -52,7 +52,7 @@ const mediaPlayers = {};
 
           player.imgElement.style.display = 'none';
       }
-      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `media/${player.currentIndex}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `medias/${player.currentIndex}/download/`);
       document.getElementById(`reportPost${pageprefix}_${postId}_media_number`).value = player.currentIndex+1;
   }
 
