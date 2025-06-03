@@ -18,6 +18,6 @@ urlpatterns = [
     path('posts/<int:post_id>/release/', views.release_post, name='release_post'),
     path('posts/<int:post_id>/duplicate/', views.duplicate_post, name='duplicate_post'),
     path('posts/<int:post_id>/download/all/', views.download_all_post_media, name='download_all_post_media'),
-    path('media/<int:media_id>/download/', views.download_single_media, name='download_single_media'),
-    path('media/<int:media_id>/delete/', views.delete_media, name='delete_media'),
+    path('medias/<int:media_id>/download/', views.download_single_media, name='download_single_media'),
+    path('medias/<int:media_id>/delete/', views.delete_media, name='delete_media'),
 ]
