@@ -29,10 +29,6 @@
             <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="dark"/>
             Dark
           </label>
-          <label class="flex gap-2 cursor-pointer items-center">
-            <input type="radio" name="theme-radios" class="radio radio-sm theme-controller" value="highcontrast"/>
-            High-Contrast
-          </label>
         </fieldset>
       </div>
       <footer class="w-full h-fit p-4 flex flex-col items-center justify-center text-center">
@@ -46,20 +42,6 @@
               date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
               const expires = "expires=" + date.toUTCString();
               document.cookie = name + "=" + value + ";" + expires + ";path=/;SameSite=Lax";
-          }
-      
-          function getCookie(name) {
-              const cookieName = name + "=";
-              const decodedCookie = decodeURIComponent(document.cookie);
-              const cookies = decodedCookie.split(';');
-              
-              for(let i = 0; i < cookies.length; i++) {
-                  let cookie = cookies[i].trim();
-                  if (cookie.indexOf(cookieName) === 0) {
-                      return cookie.substring(cookieName.length, cookie.length);
-                  }
-              }
-              return null;
           }
       
           function deleteCookie(name) {
