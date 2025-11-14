@@ -18,6 +18,8 @@ from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 #from django_auth_ldap.backend import LDAPBackend
 from django_auth_ldap.config import LDAPGroupQuery
 
+def str_to_bool(value: str) -> bool:
+    return value.lower() in ('true', '1', 't', 'yes', 'y')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +33,7 @@ load_dotenv()
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = str_to_bool(os.getenv('DJANGO_DEBUG', "False"))
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 CORS_ALLOW_CREDENTIALS = True
@@ -109,16 +111,24 @@ WSGI_APPLICATION = 'photonest_server.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql', 
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '3306'),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -234,6 +244,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 #PhotoNest Config
-BRONZE_MEDAL_LIMIT = int(os.getenv('BRONZE_MEDAL_LIMIT'))
-SILVER_MEDAL_LIMIT = int(os.getenv('SILVER_MEDAL_LIMIT'))
-GOLD_MEDAL_LIMIT = int(os.getenv('GOLD_MEDAL_LIMIT'))
+BRONZE_MEDAL_LIMIT = int(os.getenv('BRONZE_MEDAL_LIMIT', "10"))
+SILVER_MEDAL_LIMIT = int(os.getenv('SILVER_MEDAL_LIMIT', "25"))
+GOLD_MEDAL_LIMIT = int(os.getenv('GOLD_MEDAL_LIMIT', "50"))
+PAGINATION_LIMIT = int(os.getenv('PAGINATION_LIMIT', "20"))

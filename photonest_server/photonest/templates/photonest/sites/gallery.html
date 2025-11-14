@@ -69,11 +69,20 @@
       </div>
     </div>
 
-    <div class="w-full md:w-2/3 h-full flex flex-col md:flex-row items-center justify-center flex-wrap p-4">
-        {% for post in filter.qs %}
-            {% include 'photonest/elements/view_post.html' %}
-        {% endfor %}
+    <div id="post-container" class="w-full md:px-16 h-full flex flex-col md:flex-row items-center justify-center flex-wrap p-4">
+      {% include 'photonest/elements/gallery_posts.html' %}
     </div>
+
+    {% if page_obj.has_next %}
+    <div class="flex justify-center w-full mb-8">
+        <button 
+            id="load-more"
+            data-next-page="{{ page_obj.next_page_number }}"
+            class="btn btn-primary btn-md mt-4 rounded-full btn-soft">
+            Mehr laden
+        </button>
+    </div>
+    {% endif %}
 </main>
 <dialog id="createPost_modal" class="modal">
     <div class="modal-box">

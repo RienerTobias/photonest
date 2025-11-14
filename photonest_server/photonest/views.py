@@ -18,6 +18,9 @@ import zipfile
 from io import BytesIO
 from auditlog.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
+from django.core.paginator import Paginator
+from django.conf import settings as django_settings
+from django.template.loader import render_to_string
 
 # Create your views here.
 @login_required
@@ -46,8 +49,12 @@ def gallery(request):
     if not request.GET.get('ordering'):
         filter.form.initial['ordering'] = '-uploaded_at'
 
+    paginator = Paginator(filter.qs, django_settings.PAGINATION_LIMIT)
+    page_obj = paginator.get_page(request.GET.get("page", 1))
+
     return render(request, 'photonest/sites/gallery.html', {
         'filter': filter,
+        'page_obj': page_obj,
         'form': PostForm(),
         'create_post_url': 'gallery',
         'create_post_form': PostForm(),
@@ -60,6 +67,26 @@ def gallery(request):
         'alert_message': request.session.pop('alert_message', ""),
         'alert_icon': request.session.pop('alert_icon', ""),
         'alert_type': request.session.pop('alert_type', ""),
+    })
+
+@login_required
+def gallery_load_more(request):
+    page = request.GET.get("page", 1)
+
+    qs = Post.objects.all().prefetch_related('media_files')
+    filter = PostFilter(request.GET, queryset=qs, request=request)
+
+    paginator = Paginator(filter.qs, django_settings.PAGINATION_LIMIT)
+    page_obj = paginator.get_page(page)
+
+    html = render_to_string("photonest/elements/gallery_posts.html", {
+        "page_obj": page_obj
+    }, request=request)
+    
+    return JsonResponse({
+        "html": html,
+        "has_next": page_obj.has_next(),
+        "next_page": page_obj.next_page_number() if page_obj.has_next() else None
     })
 
 @login_required
