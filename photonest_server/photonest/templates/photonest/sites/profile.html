@@ -6,6 +6,7 @@
 {% load static %}
 {% load widget_tweaks %}
 {% load medal_tags %}
+{% load avatar_tags %}
 
 <main class="w-full h-full flex flex-col items-center pb-12">
     <h1 class="text-4xl font-bold m-6">PROFIL</h1>
@@ -19,10 +20,10 @@
       <a href="{% url 'docu' %}" class="bt btn-ghost m-1 max-md:fixed max-md:left-12"><i class="fa-regular fa-circle-info"></i></a>
     </div>
 
-    <div class="avatar">
-        <div class="w-24 rounded-full">
-          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ request.user }}" alt="avatar"/>
-        </div>
+    <div class="avatar avatar-placeholder">
+      <div class="bg-primary/10 text-primary-content w-16 rounded-full">
+        <span class="text-2xl font-bold">{{ user.username|user_initials }}</span>
+      </div>
     </div>
 
     <p class="text-2xl mt-4"><i class="fa-regular fa-user"></i>&ensp;{{ user }}</p>
