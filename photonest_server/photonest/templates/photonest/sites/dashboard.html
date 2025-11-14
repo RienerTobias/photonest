@@ -7,6 +7,7 @@
 {% load widget_tweaks %}
 {% load general_tags %}
 {% load medal_tags %}
+{% load avatar_tags %}
 
 <main class="w-full h-full flex flex-col items-center">
     <h1 class="text-4xl font-bold m-6">DASHBOARD</h1>
@@ -55,11 +56,9 @@
                         <th>{{ forloop.counter }}</th>
                         <td>
                             <div class="flex items-center gap-3">
-                            <div class="avatar max-md:hidden">
-                                <div class="mask mask-squircle h-12 w-12">
-                                <img
-                                    src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ user }}"
-                                    alt="Profile Picture" />
+                            <div class="avatar avatar-placeholder max-md:hidden">
+                                <div class="bg-primary/10 text-primary-content w-12 rounded-full">
+                                    <span class="text-xl font-bold">{{ user.username|user_initials }}</span>
                                 </div>
                             </div>
                             <div>

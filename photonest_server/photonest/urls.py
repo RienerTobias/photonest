@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('', views.home, name='home'),
     path('gallery', views.gallery, name='gallery'),
+    path('gallery/load-more/', views.gallery_load_more, name='gallery_load_more'),
     path('dashboard', views.dashboard, name='dashboard'),
     path('profile', views.profile, name='profile'),
     path('settings', views.settings, name='settings'),

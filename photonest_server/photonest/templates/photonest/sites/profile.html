@@ -6,23 +6,24 @@
 {% load static %}
 {% load widget_tweaks %}
 {% load medal_tags %}
+{% load avatar_tags %}
 
 <main class="w-full h-full flex flex-col items-center pb-12">
     <h1 class="text-4xl font-bold m-6">PROFIL</h1>
 
     <div class="flex flex-row fixed top-4 right-4 text-2xl">
-      <form action="/accounts/logout/" method="POST" class="flex flex-row items-center m-1">
+      <form action="/accounts/logout/" method="POST" class="flex flex-row items-center m-1 cursor-pointer">
         {% csrf_token %}
-        <button type="submit"><i class="fa-regular fa-right-from-bracket"></i></button>
+        <button type="submit"><i class="fa-regular fa-right-from-bracket cursor-pointer"></i></button>
       </form>
       <a href="{% url 'settings' %}" class="bt btn-ghost m-1 max-md:fixed max-md:left-4"><i class="fa-regular fa-gear"></i></a>
       <a href="{% url 'docu' %}" class="bt btn-ghost m-1 max-md:fixed max-md:left-12"><i class="fa-regular fa-circle-info"></i></a>
     </div>
 
-    <div class="avatar">
-        <div class="w-24 rounded-full">
-          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed={{ request.user }}" alt="avatar"/>
-        </div>
+    <div class="avatar avatar-placeholder">
+      <div class="bg-primary/10 text-primary-content w-16 rounded-full">
+        <span class="text-2xl font-bold">{{ user.username|user_initials }}</span>
+      </div>
     </div>
 
     <p class="text-2xl mt-4"><i class="fa-regular fa-user"></i>&ensp;{{ user }}</p>
@@ -35,7 +36,7 @@
             <div class="flex flex-col items-center">
               <div class="avatar">
                 <div class="w-20">
-                  <img src="{% static 'photonest/images/medals/medal-bronze-uploads.svg' %}" class="{% if request.user|has_medal:'uploads, bronze' == False %}grayscale blur-sm{% endif %}"/>
+                  <img src="{% static 'photonest/images/medals/medal-bronze-uploads.webp' %}" class="{% if request.user|has_medal:'uploads, bronze' == False %}grayscale blur-sm{% endif %}"/>
                 </div>
               </div>
               <p class="text-md font-bold {% if request.user|has_medal:'uploads, bronze' == False %}text-base-content/50{% endif %}">{% bronze_count %}</p>
@@ -43,7 +44,7 @@
             <div class="flex flex-col items-center">
               <div class="avatar">
                 <div class="w-20">
-                  <img src="{% static 'photonest/images/medals/medal-silver-uploads.svg' %}" class="{% if request.user|has_medal:'uploads, silver' == False %}grayscale blur-sm{% endif %}"/>
+                  <img src="{% static 'photonest/images/medals/medal-silver-uploads.webp' %}" class="{% if request.user|has_medal:'uploads, silver' == False %}grayscale blur-sm{% endif %}"/>
                 </div>
               </div>
               <p class="text-md font-bold {% if request.user|has_medal:'uploads, silver' == False %}text-base-content/50{% endif %}">{% silver_count %}</p>
@@ -51,7 +52,7 @@
             <div class="flex flex-col items-center">
               <div class="avatar">
                 <div class="w-20">
-                  <img src="{% static 'photonest/images/medals/medal-gold-uploads.svg' %}" class="{% if request.user|has_medal:'uploads, gold' == False %}grayscale blur-sm{% endif %}"/>
+                  <img src="{% static 'photonest/images/medals/medal-gold-uploads.webp' %}" class="{% if request.user|has_medal:'uploads, gold' == False %}grayscale blur-sm{% endif %}"/>
                 </div>
               </div>
               <p class="text-md font-bold {% if request.user|has_medal:'uploads, gold' == False %}text-base-content/50{% endif %}">{% gold_count %}</p>
@@ -65,7 +66,7 @@
           <div class="flex flex-col items-center">
             <div class="avatar">
               <div class="w-20">
-                <img src="{% static 'photonest/images/medals/medal-bronze-likes.svg' %}" class="{% if request.user|has_medal:'likes, bronze' == False %}grayscale blur-sm{% endif %}"/>
+                <img src="{% static 'photonest/images/medals/medal-bronze-likes.webp' %}" class="{% if request.user|has_medal:'likes, bronze' == False %}grayscale blur-sm{% endif %}"/>
               </div>
             </div>
             <p class="text-md font-bold {% if request.user|has_medal:'likes, bronze' == False %}text-base-content/50{% endif %}">{% bronze_count %}</p>
@@ -73,7 +74,7 @@
           <div class="flex flex-col items-center">
             <div class="avatar">
               <div class="w-20">
-                <img src="{% static 'photonest/images/medals/medal-silver-likes.svg' %}" class="{% if request.user|has_medal:'likes, silver' == False %}grayscale blur-sm{% endif %}"/>
+                <img src="{% static 'photonest/images/medals/medal-silver-likes.webp' %}" class="{% if request.user|has_medal:'likes, silver' == False %}grayscale blur-sm{% endif %}"/>
               </div>
             </div>
             <p class="text-md font-bold {% if request.user|has_medal:'likes, silver' == False %}text-base-content/50{% endif %}">{% silver_count %}</p>
@@ -81,7 +82,7 @@
           <div class="flex flex-col items-center">
             <div class="avatar">
               <div class="w-20">
-                <img src="{% static 'photonest/images/medals/medal-gold-likes.svg' %}" class="{% if request.user|has_medal:'likes, gold' == False %}grayscale blur-sm{% endif %}"/>
+                <img src="{% static 'photonest/images/medals/medal-gold-likes.webp' %}" class="{% if request.user|has_medal:'likes, gold' == False %}grayscale blur-sm{% endif %}"/>
               </div>
             </div>
             <p class="text-md font-bold {% if request.user|has_medal:'likes, gold' == False %}text-base-content/50{% endif %}">{% gold_count %}</p>
@@ -95,7 +96,7 @@
         <div class="flex flex-col items-center">
           <div class="avatar">
             <div class="w-20">
-              <img src="{% static 'photonest/images/medals/medal-bronze-used.svg' %}" class="{% if request.user|has_medal:'uses, bronze' == False %}grayscale blur-sm{% endif %}"/>
+              <img src="{% static 'photonest/images/medals/medal-bronze-used.webp' %}" class="{% if request.user|has_medal:'uses, bronze' == False %}grayscale blur-sm{% endif %}"/>
             </div>
           </div>
           <p class="text-md font-bold {% if request.user|has_medal:'uses, bronze' == False %}text-base-content/50{% endif %}">{% bronze_count %}</p>
@@ -103,7 +104,7 @@
         <div class="flex flex-col items-center">
           <div class="avatar">
             <div class="w-20">
-              <img src="{% static 'photonest/images/medals/medal-silver-used.svg' %}" class="{% if request.user|has_medal:'uses, silver' == False %}grayscale blur-sm{% endif %}"/>
+              <img src="{% static 'photonest/images/medals/medal-silver-used.webp' %}" class="{% if request.user|has_medal:'uses, silver' == False %}grayscale blur-sm{% endif %}"/>
             </div>
           </div>
           <p class="text-md font-bold {% if request.user|has_medal:'uses, silver' == False %}text-base-content/50{% endif %}">{% silver_count %}</p>
@@ -111,7 +112,7 @@
         <div class="flex flex-col items-center">
           <div class="avatar">
             <div class="w-20">
-              <img src="{% static 'photonest/images/medals/medal-gold-used.svg' %}" class="{% if request.user|has_medal:'uses, gold' == False %}grayscale blur-sm{% endif %}"/>
+              <img src="{% static 'photonest/images/medals/medal-gold-used.webp' %}" class="{% if request.user|has_medal:'uses, gold' == False %}grayscale blur-sm{% endif %}"/>
             </div>
           </div>
           <p class="text-md font-bold {% if request.user|has_medal:'uses, gold' == False %}text-base-content/50{% endif %}">{% gold_count %}</p>

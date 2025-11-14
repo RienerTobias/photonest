@@ -15,11 +15,37 @@
 		<link rel="manifest" href="/static/photonest/favicon/site.webmanifest" />
 
 		<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.7.2/css/all.css">
-
+		<script src="{% static 'photonest/js/load_posts.js' %}?v={{ timestamp }}"></script>
 		{% tailwind_css %}
+		<script>
+		(function() {
+			function getCookie(name) {
+				const cookieName = name + "=";
+				const decodedCookie = decodeURIComponent(document.cookie);
+				const cookies = decodedCookie.split(';');
+				for(let i = 0; i < cookies.length; i++) {
+					let cookie = cookies[i].trim();
+					if (cookie.indexOf(cookieName) === 0) {
+						return cookie.substring(cookieName.length, cookie.length);
+					}
+				}
+				return null;
+			}
+			const savedTheme = getCookie('theme');
+			let themeToSet;
+			if (savedTheme) {
+				themeToSet = savedTheme;
+			} else {
+				// Systemtheme fallback
+				themeToSet = window.matchMedia('(prefers-color-scheme: dark)').matches
+					? 'dark'
+					: 'light';
+			}
+			document.documentElement.setAttribute('data-theme', themeToSet);
+		})();
+		</script>
 	</head>
 	
 	{% load django_browser_reload %}
 	{% block base_content %}{% endblock %}
-	<script src="{% static 'photonest/js/theme_controller.js' %}?v={{ timestamp }}"></script>
 </html>
