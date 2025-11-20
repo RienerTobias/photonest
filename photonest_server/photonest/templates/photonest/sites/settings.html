@@ -32,6 +32,8 @@
         </fieldset>
       </div>
       <footer class="w-full h-fit p-4 flex flex-col items-center justify-center text-center">
+        <img src="{% static 'photonest/images/drs_logo_light.webp' %}" class="w-48" id="drs-logo-light">
+        <img src="{% static 'photonest/images/drs_logo_dark.webp' %}" class="w-48 hidden" id="drs-logo-dark">
         <p>&copy; Elia Dieminger, Tobias Riener, Tobias Schippany - HTBLuVA Waidhofen an der Ybbs</p>
       </footer>
     </div>
@@ -83,9 +85,11 @@
                           deleteCookie('theme');
                           const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                           document.documentElement.setAttribute('data-theme', systemTheme);
+                          changeIMG(this.value);
                       } else {
                           setCookie('theme', this.value, 365);
                           document.documentElement.setAttribute('data-theme', this.value);
+                          changeIMG(this.value);
                       }
                   }
               });
@@ -98,6 +102,19 @@
               }
           });
       });
+
+      function changeIMG(savedTheme){
+        if(document.getElementById('drs-logo-dark')){
+          if(savedTheme == 'dark'){
+            document.getElementById('drs-logo-light').style.display = 'none';
+            document.getElementById('drs-logo-dark').style.display = 'block';
+          }
+          else{
+            document.getElementById('drs-logo-light').style.display = 'block';
+            document.getElementById('drs-logo-dark').style.display = 'none';
+          }
+        }
+      }
     </script>
 </main>
 {% endblock %}
