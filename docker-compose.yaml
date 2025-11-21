@@ -20,7 +20,7 @@ services:
       - photonest-network
 
   web:
-    image: ghcr.io/rienertobias/photonest:latest
+    image: ghcr.io/drs-engineering/photonest:latest
     restart: unless-stopped
     depends_on:
       db:
