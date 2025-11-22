@@ -21,7 +21,8 @@ const mediaPlayers = {};
         carouselContainer.querySelectorAll('.carousel-item').forEach(item => {
             item.addEventListener('click', function() {
                 const media = this.querySelector('img');
-                if (media.src.match(/\.(jpeg|jpg|gif|png|webp|)$/) != null) {
+                
+                if (media.src.match(/\.(jpeg|jpg|gif|png|webp)$/) != null) {
                     ShowFullscreenImg(media.getAttribute('data-url'));
                 }
                 else{
@@ -64,4 +65,9 @@ function ShowFullscreenImg(path){
     const fullscreenimg = document.getElementById('fullscreen_img');
     fullscreenimg.querySelector('img').src = path;
     fullscreenimg.showModal();
+}
+function CloseFullscreenImg(){
+    const fullscreenimg = document.getElementById('fullscreen_img');
+    fullscreenimg.querySelector('img').src = "";
+    fullscreenimg.close();
 }
