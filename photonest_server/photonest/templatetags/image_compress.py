@@ -62,7 +62,12 @@ def compressed_image(media_file, width=800, format="webp", quality=70):
         except Exception:
             exif_bytes = None
 
-        img = img.convert("RGB")
+        if format in ("jpeg", "jpg"):
+            img = img.convert("RGB")
+        else:
+            # WebP unterstützt Alpha → RGBA behalten
+            if img.mode not in ("RGBA", "LA"):
+                img = img.convert("RGBA")
 
         # --- Orientierung nach Transpose prüfen und Thumbnail-Größe wählen ---
         orig_w, orig_h = img.size
