@@ -1,5 +1,7 @@
 {% load post_tags %}
 {% load widget_tweaks %}
+{% load image_compress %}
+
 <div class="w-full max-w-96 m-2 max-md:mx-0 relative">
 {% if request.user == post.user or perms.photonest.favor_post or request.user.is_superuser %}<button class="btn btn-soft btn-error absolute top-1 left-1 z-10 shadow-xl" onclick="deletePost{{ pageprefix }}_{{ post.id }}.showModal()"><i class="fa-regular fa-trash"></i></button>{% endif %}
 <a class="btn btn-soft absolute top-1 right-1 z-10 shadow-xl" href="{% url 'view_post' post.id %}"><i class="fa-regular fa-expand"></i></a>
@@ -8,7 +10,7 @@
         {% with first_media=post.media_files.first %}
           {% if first_media %}
             {% if first_media.media_type == 'photo' %}
-              <img src="{{ first_media.media_file.url }}" alt="Hauptbild">
+              <img src="{% compressed_image first_media.media_file.url %}" alt="Hauptbild" data-url="{{ media.media_file.url }}">
             {% else %}
               <video src="{{ first_media.media_file.url }}" id="video-preview-{{ pageprefix }}_{{ post.id }}"></video>
             {% endif %}
@@ -76,8 +78,9 @@
           {% for media in post.media_files.all %}
           { 
               type: '{{ media.media_type }}', 
-              url: '{{ media.media_file.url }}',
+              url: '{% compressed_image media.media_file.url %}',
               id: '{{ media.id }}',
+              full_res_url: '{{ media.media_file.url }}',
           },
           {% endfor %}
       ]);

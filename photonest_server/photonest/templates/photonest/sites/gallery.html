@@ -29,6 +29,16 @@
             </fieldset>
 
             <fieldset class="fieldset m-1">
+              <legend class="fieldset-legend">Abteilung</legend>
+              {% render_field filter.form.department class="w-full select rounded-full" %}
+            </fieldset>
+
+            <fieldset class="fieldset m-1">
+              <legend class="fieldset-legend">Jahrgang</legend>
+              {% render_field filter.form.year class="w-full select rounded-full" %}
+            </fieldset>
+
+            <fieldset class="fieldset m-1">
               <legend class="fieldset-legend">Likes</legend>
               <label class="fieldset-label" for="{{ filter.form.only_liked.id_for_label }}">
                 {% render_field filter.form.only_liked class="checkbox" %}
