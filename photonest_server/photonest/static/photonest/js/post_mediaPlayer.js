@@ -13,7 +13,7 @@ const mediaPlayers = {};
         document.getElementById(`btn-media-right-${pageprefix}-${postId}`).style.visibility = "hidden";
       }
 
-      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `/medias/${mediaFiles[0].id}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `/media/${mediaFiles[0].id}/download/`);
       document.getElementById(`reportPost${pageprefix}_${postId}_media_number`).value = 1;
 
     const carouselContainer = document.getElementById(`carousel-container-${pageprefix}-${postId}`);
@@ -21,8 +21,11 @@ const mediaPlayers = {};
         carouselContainer.querySelectorAll('.carousel-item').forEach(item => {
             item.addEventListener('click', function() {
                 const media = this.querySelector('img');
-                if (media.src.match(/\.(jpeg|jpg|gif|png)$/) != null) {
-                    ShowFullscreenImg(media.src);
+                if (media.src.match(/\.(jpeg|jpg|gif|png|webp|)$/) != null) {
+                    ShowFullscreenImg(media.getAttribute('data-url'));
+                }
+                else{
+                    console.log("failed fullscreen - url: " + media.src)
                 }
             });
         });
@@ -40,6 +43,7 @@ const mediaPlayers = {};
       if (currentMedia.type === 'photo') {
           player.imgElement.src = currentMedia.url;
           player.imgElement.style.display = 'block';
+          player.imgElement.setAttribute('data-url', currentMedia.full_res_url)
           
           player.videoElement.style.display = 'none';
           player.videoElement.pause();
@@ -52,7 +56,7 @@ const mediaPlayers = {};
 
           player.imgElement.style.display = 'none';
       }
-      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `/medias/${medias[0].id}/download/`);
+      if(can_download)document.getElementById(`media-download-${pageprefix}_${postId}`).setAttribute("href", `/media/${currentMedia.id}/download/`);
       document.getElementById(`reportPost${pageprefix}_${postId}_media_number`).value = player.currentIndex+1;
   }
 

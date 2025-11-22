@@ -1,5 +1,6 @@
 {% load post_tags %}
 {% load widget_tweaks %}
+{% load image_compress %}
 
 <div class="w-full h-fit flex flex-col items-center justify">
     <div class="w-full h-fit flex flex-row items-center justify-center">
@@ -9,10 +10,10 @@
         <div class="carousel-item w-full">
           {% if media %}
             {% if media.media_type == 'photo' %}
-              <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain">
+              <img src="{% compressed_image media.media_file.url %}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain" data-url="{{ media.media_file.url }}">
               <video src="{{ media.media_file.url }}" id="current-video-{{ pageprefix }}-{{ post.id }}" controls class="w-full h-full object-contain hidden"></video>
             {% else %}
-              <img src="{{ media.media_file.url }}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain hidden">
+              <img src="{% compressed_image media.media_file.url %}" alt="Hauptbild" id="current-image-{{ pageprefix }}-{{ post.id }}" class="w-full h-full object-contain hidden" data-url="{{ media.media_file.url }}">
               <video src="{{ media.media_file.url }}" id="current-video-{{ pageprefix }}-{{ post.id }}" controls class="w-full h-full object-contain"></video>
             {% endif %}
           {% else %}
